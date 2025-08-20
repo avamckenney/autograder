@@ -15,6 +15,7 @@ const pinoTransport = pino.transport({
                 singleLine: true,
                 messageFormat: '{msg}',
                 level: DEFAULT_LOG_LEVEL, // Set the log level to debug
+                minimumLevel: DEFAULT_LOG_LEVEL, // Set the log level to debug
             },
         },
         {
