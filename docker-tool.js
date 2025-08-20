@@ -42,8 +42,7 @@ async function createTarFile(executionEntry) {
   } catch (error) {
     logger.error('Error during tar archive creation:', error);
     logger.error(error.stack);
-    await saveErrorLogFile(executionEntry, error);
-    return "";
+    throw error;
   }
 }
 
@@ -61,7 +60,7 @@ async function clearExistingContainer(executionEntry){
     logger.debug(`Removed existing container: ${containerName}`);
   } catch (err) {
     await saveErrorLogFile(executionEntry, err);
-    if (err.statusCode !== 404) { // Ignore not found error
+    if (err.statusCode === 404) { // Ignore not found error
       logger.error(`Error removing existing container: ${containerName}`, err);
     } else {
       logger.debug(`No existing container named ${containerName} found.`);
