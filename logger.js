@@ -70,17 +70,27 @@ const betterStackTransport = pino.transport({
     },
 });*/
 
-const logger = pino({
+//const logger = pino({
   //level: process.env.PINO_LOG_LEVEL || 'trace',
-  level: DEFAULT_LOG_LEVEL,
+//  level: DEFAULT_LOG_LEVEL,
   /*formatters: {
     level: (label) => {
       return { level: label.toUpperCase() };
     },
   },*/
-},
-pinoTransport);
+//},
+//pinoTransport);
 //pinoTransport)
+
+const logger = pino({
+          transport: {
+            target: 'pino-pretty',
+            options: {
+              colorize: true, // Enable colorful output
+              level: "trace"
+            },
+          },
+        });
 
 
 
