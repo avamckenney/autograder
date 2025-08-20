@@ -1,0 +1,47 @@
+doctype html
+html
+    head
+        title System Statistics
+        link(rel='stylesheet', href='/stylesheets/style.css')
+    body
+        include header.pug
+        .container
+            h1 System Statistics
+            p
+                | <strong>Unique Users:</strong> #{statistics.usersCount}
+            p
+                | <strong>Total Assignments:</strong> #{statistics.assignmentsCount}
+            p
+                | <strong>Total Executions:</strong> #{statistics.executionsCount}
+            p 
+                | <strong>Current Queue Size:</strong> #{statistics.queueSize}
+            p 
+                | <strong>Max Queue Count Size:</strong> #{statistics.maxQueueCountReached}
+            p 
+                | <strong>Recent Average Execution Time:</strong> 
+                if statistics.recentAverageExecutionTime && statistics.recentAverageExecutionTime > 0
+                    | #{statistics.recentAverageExecutionTime.toFixed(2)} seconds
+                else
+                    | Not available (no completed executions or error calculating average)
+        
+        .container
+            h1 Assignment Statistics 
+
+            for assignment in statistics.assignments
+                .assignment-statistics
+                    h3 Assignment: #{assignment.name}
+                    p
+                        | <strong>Creator:</strong> #{assignment.creator.username}
+                    p
+                        | <strong>Submissions:</strong> 
+                        | Completed: #{assignment.completedCount}, 
+                        | Failed: #{assignment.failedCount}, 
+                        | Pending: #{assignment.pendingCount}
+                    if assignment.averageExecutionTime !== "N/A"
+                        p
+                            | <strong>Average Execution Time:</strong> #{assignment.averageExecutionTime.toFixed(2)} seconds
+                    else 
+                        p
+                            | <strong>Average Execution Time:</strong> Not available (no completed executions or error calculating average)
+                    br
+                    br

@@ -1,0 +1,42 @@
+doctype html
+html
+    head
+        title Assignment - #{assignment.name}
+        link(rel='stylesheet', href='/stylesheets/style.css')
+    body
+        include header.pug
+        .container
+            h1 Assignment: #{assignment.name}
+            p
+                | <strong>Created by:</strong> #{assignment.creator.username}
+            if assignment.deadline
+                p
+                    | <strong>Submission Deadline:</strong> #{assignment.deadline.toLocaleString()}
+                if deadlinePassed
+                    p
+                        | <strong>Time to Deadline:</strong>
+                        span(style="color:red")
+                            |  Submission Deadline Passed (#{toDeadline})
+                else
+                    p
+                        | <strong>Time to Deadline:</strong> #{toDeadline} (current time: #{new Date().toLocaleString()})
+            else
+                p
+                    | <strong>Submission Deadline:</strong> None    
+            //p
+            //    | <strong>Expected Zip Name:</strong> #{assignment.expectedZipName}
+            br
+            .form-section
+                h2 Submit Your Assignment
+                if deadlinePassed
+                    p(style="color:red") 
+                        | Submission deadline has passed. You cannot submit your assignment.
+                else
+                    if assignment.extraSubmissionsPenaltyUnit !== "none" && assignment.freeSubmissions > 0                            
+                        div
+                            p(style="color:red")
+                                | Warning: This assignment will apply a penalty after you have exceeded the number of free submissions (#{assignment.freeSubmissions}). The penalty for each extra submission will be #{assignment.extraSubmissionsPenalty} #{assignment.extraSubmissionsPenaltyUnit}. So far you have made #{numSubmissions} submission(s). You have #{(assignment.freeSubmissions - numSubmissions) > 0 ? (assignment.freeSubmissions - numSubmissions) : "no"} free submissions remaining.
+                    form(action="" method="post" enctype="multipart/form-data")
+                        label(for="zipFile") Upload your zip file:
+                        input(type="file" name="zipFile" id="zipFile" accept=".zip" required)
+                        button(type="submit") Submit

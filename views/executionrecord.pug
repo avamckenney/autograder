@@ -1,0 +1,90 @@
+html
+    head
+        title View Execution Record
+        link(rel='stylesheet', href='/stylesheets/style.css')
+    body
+        include header.pug
+        if execution.status == 'pending'
+            script(src='/javascripts/executionrecord.js')
+        div.maincontent
+            if execution
+                h1 Feedback for Submission ##{execution._id}
+                ul
+                    li
+                        strong User: 
+                        a(href="/users/" + execution.studentName)
+                            |  #{execution.studentName}
+                    li
+                        strong Assignment: 
+                        a(href="/users/" + execution.assignment.creator.username + "/assignments/" + execution.assignment.name)
+                            |  #{execution.assignment.name}
+                    li
+                        strong Assignment Creator: 
+                        |  #{execution.assignment.creator.username}
+                    
+                    li
+                        strong Submitted At: 
+                        |  #{execution.createdAt}
+                    li(id="execution-status")
+                        strong Status: 
+                        if execution.status == 'completed'
+                            span(style="color: green;") Completed
+                        else if execution.status == 'failed'
+                            span(style="color: red;") Failed
+                        else if execution.status == 'pending'
+                            span(style="color: grey;") Pending (last checked at #{date})
+                        else if execution.status == 'cancelled'
+                            span(style="color: gray;") Cancelled
+                        else
+                            span(style="color: gray;") Unknown
+                    if execution.status == 'completed' || execution.status == 'failed'
+                        li(id="finished-at")
+                            strong Finished At: 
+                            |  #{execution.finishedAt.toString()}
+                        li(id="execution-time")
+                            strong Time to Grade: 
+                            |  #{execution.executionTime} seconds
+                        if execution.grade >= 0
+                            li(id="grade")
+                                strong Grade: 
+                                |  #{execution.grade} / #{execution.assignment.maxGrade}
+                    else if execution.status == 'cancelled'
+                        li(id="finished-at")
+                            strong Cancelled At: 
+                            |  #{execution.finishedAt.toString()}
+                    else
+                        li(id="finished-at")
+                            strong Finished At: 
+                            |  Pending...
+                        li(id="execution-time")
+                            strong Time to Grade: 
+                            |  Pending...
+                        li(id="grade")
+                            strong Grade: 
+                            |  Pending...
+                strong Feedback:
+                br
+                if execution.status == 'completed'
+                    pre(id="execution-feedback")
+                        | #{execution.feedback}
+                else if execution.status == 'pending'
+                    pre(id="execution-feedback") Execution is still pending. Please wait for the evaluation to complete.
+                else if execution.status == 'failed'
+                    pre(id="execution-feedback") Execution failed.
+                else if execution.status == 'cancelled'
+                    pre(id="execution-feedback") Execution was cancelled.
+                else
+                    pre(id="execution-feedback") No feedback available.    
+                br
+                a(href="/executions/" + execution._id + "/zip") Download Submission Zip
+                br
+                a(href="/executions/" + execution._id + "/summary") Download Execution Summary
+                br
+                br
+                
+                if logs
+                    strong Logs:
+                    pre(id="execution-logs")
+                        | #{logs}
+            else
+                p No execution record found.

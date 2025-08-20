@@ -1,0 +1,44 @@
+doctype html
+
+html
+    head
+        title User Profile
+        link(rel='stylesheet', href='/stylesheets/style.css')
+    body
+        include header.pug
+        div.maincontent
+            h1 User: #{user.username}
+            h2 Your Last #{displaycap} Submissions
+            if executions.length
+                each execution in executions
+                    div.submission                    
+                        | Assignment: 
+                        a(href="/users/" + execution.assignment.creator.username + "/assignments/" + execution.assignment.name)
+                            |  #{execution.assignment.name}
+                        br
+                        if execution.status === 'completed'
+                            span(style="color: green;")
+                                | Status: #{execution.status}
+                            br
+                            | Completed At: #{execution.finishedAt}
+                        else if execution.status === 'failed'
+                            span(style="color: red;")
+                                | Status: #{execution.status}
+                            br
+                            | Completed At: #{execution.finishedAt}
+                        else if execution.status == "cancelled"
+                            span(style="color: gray;")
+                                | Status: #{execution.status}
+                            br
+                            | Cancelled At: #{execution.finishedAt}
+                        else
+                            span(style="color: orange;")
+                                | Status: #{execution.status}
+                            br
+                            | Submitted At: #{execution.createdAt}
+                        br
+                        a(href="/executions/" + execution.id) View Details
+                        br
+                        br
+            else
+                p You haven't made any submissions yet.

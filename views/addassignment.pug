@@ -1,0 +1,60 @@
+doctype html
+html
+    head
+        title Add Assignment
+        link(rel='stylesheet', href='/stylesheets/style.css')
+    body
+        include header.pug
+        .container
+        div.maincontent
+            h1 Add New Assignment
+            if(user)
+                .form-section
+                    form(action="/users/" + user.username + "/assignments" method="POST" enctype="multipart/form-data")
+                        div
+                            label(for="name") Assignment Name (must be unique across all assignments, no spaces):
+                            input(type="text" id="name" name="name" required)
+                        //div
+                        //    label(for="expectedZipName") Expected Zip Name:
+                        //    input(type="text" id="expectedZipName" name="expectedZipName" required)
+                        div
+                            label(for="maxGrade") Max Grade:
+                            input(type="text" id="maxGrade" name="maxGrade" value="100" required)
+                        div
+                            label(for="deadline") Submission Deadline (submissions stopped after this time, leave blank for none):
+                            input(type="datetime-local" id="deadline" name="deadline")
+                        br
+                        div
+                            label(for="resourcesZip") Resources Zip File:
+                            input(type="file" id="resourcesZip" name="resourcesZip" accept=".zip" required)
+                        div
+                            label(for="command") Command to Execute Grading:
+                            input(type="text" id="command" name="command" required)
+                        div
+                            label(for="imageName") Image Name:
+                            input(type="text" id="imageName" name="imageName" required)
+                        div
+                            label(for="timeout") Timeout (seconds):
+                            input(type="text" id="timeout" name="timeout" required)
+                        div
+                            label(for="maxZipSize") Max Zip Size (MB):
+                            input(type="text" id="maxZipSize" name="maxZipSize" required)
+                        div
+                            label(for="extraSubmissionsPenaltyUnit") Extra Submissions Penalty (percentage deducted for each extra submission):
+                            select(name="extraSubmissionsPenaltyUnit", id="extraSubmissionsPenaltyUnit")
+                                option(value="none", selected) none
+                                option(value="percent") percent
+                                option(value="points") points
+                            label(for="extraSubmissionsPenalty") Extra Submissions Penalty Value:
+                            input(type="text" id="extraSubmissionsPenalty" name="extraSubmissionsPenalty" value="0" required)                    
+                        div
+                            label(for="freeSubmissions") Free Submissions (number of submissions without penalty, 0 for unlimited):
+                            input(type="text" id="freeSubmissions" name="freeSubmissions" value="0" required)
+                        div(id="penaltyWarning", style="color: red; display: none;")
+                        br
+                        div
+                            button(type="submit") Submit
+            else
+                p You must be logged in to add an assignment.
+                a(href="/login") Login
+        script(src="/javascripts/assignmentcreation.js")

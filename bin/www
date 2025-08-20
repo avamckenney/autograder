@@ -1,0 +1,123 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var app = require('../app');
+var debug = require('debug')('autograder-web-app:server');
+var http = require('http');
+const mongoose = require('mongoose');
+const logger = require('../logger'); // Import the logger module
+
+/**
+ * Get port from environment and store in Express.
+ */
+
+var port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
+/**
+ * Create HTTP server.
+ */
+var server = http.createServer(app);
+
+main().catch(err => console.log(err));
+
+async function main() {
+  //Connect to Mongoose/MongoDB
+  if (process.env.NODE_ENV === 'production') {
+    // Production-specific configurations (e.g., debug logging, different database)
+    console.log('Running in production mode');
+    await mongoose.connect('mongodb://127.0.0.1:27017/autograderwebapp');
+  } else {
+    // Development-specific configurations (e.g., optimized logging, different database)
+    console.log('Running in development mode');
+    await mongoose.connect('mongodb://127.0.0.1:27017/autograderwebapp');
+  }
+
+  
+
+  /**
+   * Listen on provided port, on all network interfaces.
+   */
+
+  server.listen(port);
+  server.on('error', onError);
+  server.on('listening', onListening);
+
+  process.on('uncaughtException', (err) => {
+    // log the exception
+    logger.fatal(err, 'uncaught exception detected');
+    // shutdown the server gracefully
+    server.close(() => {
+      process.exit(1); // then exit
+    });
+
+    // If a graceful shutdown is not achieved after 1 second,
+    // shut down the process completely
+    setTimeout(() => {
+      process.abort(); // exit immediately and generate a core dump file
+    }, 1000).unref()
+    process.exit(1);
+  });
+}
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+}

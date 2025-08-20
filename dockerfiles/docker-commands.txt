@@ -1,0 +1,6 @@
+Build from current directory:
+docker build --progress=plain -t python-base .
+
+
+Clear cache:
+docker buildx prune
