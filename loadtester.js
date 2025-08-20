@@ -146,11 +146,15 @@ async function analyseResults(){
 }
 
 async function runTest(){
+    console.log("Starting load test...");
     try{
+        console.log("Removing existing load test zip directory:", loadTestZipDir);
         fs.rmdirSync(loadTestZipDir, { recursive: true, force: true });
+        console.log("Existing load test zip directory removed successfully.");
     }catch(error) {
         console.error("Error removing existing load test zip directory:", error.message);
     }
+    console.log("Creating load test zip directory:", loadTestZipDir);
     fs.mkdirSync(loadTestZipDir, { recursive: true })
     await mongoose.connect('mongodb://127.0.0.1:27017/autograderwebapp');
     await fsPromises.rmdir(loadTestZipDir, { recursive: true, force: true }).catch(() => {});
