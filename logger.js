@@ -30,7 +30,8 @@ const pinoTransport = pino.transport({
             target: '@logtail/pino',
             options: { 
                 sourceToken: 'nC9ECehHxhoWLH5KTUaiZmaA',
-                options: { endpoint: 'https://s1448634.eu-nbg-2.betterstackdata.com' }
+                options: { endpoint: 'https://s1448634.eu-nbg-2.betterstackdata.com' },
+                level: DEFAULT_LOG_LEVEL, // Set the log level to debug
             },
         },
     ]
