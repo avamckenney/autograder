@@ -1,6 +1,8 @@
 const pino = require('pino');
 const path = require('path');
 
+const DEFAULT_LOG_LEVEL = 'trace'; // Default log level
+
 const pinoTransport = pino.transport({
     targets: [
         {
@@ -12,6 +14,7 @@ const pinoTransport = pino.transport({
                 levelFirst: true,
                 singleLine: true,
                 messageFormat: '{msg}',
+                level: DEFAULT_LOG_LEVEL, // Set the log level to debug
             },
         },
         {
@@ -20,6 +23,7 @@ const pinoTransport = pino.transport({
                 destination: path.join(__dirname, `app.log`),
                 mkdir: true,
                 append: true,
+                level: DEFAULT_LOG_LEVEL,
             }
         },
         {
@@ -66,7 +70,7 @@ const betterStackTransport = pino.transport({
 
 const logger = pino({
   //level: process.env.PINO_LOG_LEVEL || 'trace',
-  level: 'trace',
+  level: DEFAULT_LOG_LEVEL,
   /*formatters: {
     level: (label) => {
       return { level: label.toUpperCase() };
