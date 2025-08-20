@@ -14,7 +14,7 @@ const docker = new Docker();
 
 async function createTarFile(executionEntry) {
   try {
-    logger.debug(`Creating tar file for execution entry: ${executionEntry._id}`);
+    logger.info(`Creating tar file for execution entry: ${executionEntry._id}`);
     
     let script = "";
     script += "unzip ../" + executionEntry.zipFilePath + " -d ./\n";
@@ -24,12 +24,12 @@ async function createTarFile(executionEntry) {
     script += "mv feedback.txt " + "feedback-" + executionEntry._id + ".txt\n";
     script += "mv grade.txt " + "grade-" + executionEntry._id + ".txt\n";
     //script += "ls -l\n";
-    logger.debug("Writing script to file for execution entry: " + executionEntry._id);
+    logger.info("Writing script to file for execution entry: " + executionEntry._id);
     await fsPromises.writeFile(path.join("scripts", executionEntry.zipFilePath.replaceAll(path.sep, '.') + ".script.sh"), script);
-    logger.debug("Script written to file for execution entry: " + executionEntry._id);
+    logger.info("Script written to file for execution entry: " + executionEntry._id);
 
     let zipPath = executionEntry.zipFilePath + ".data.tar.gz";
-    logger.debug(`Creating tar archive at: ${zipPath}`);
+    logger.info(`Creating tar archive at: ${zipPath}`);
     await tar.create(
       {
         gzip: true,
@@ -37,7 +37,7 @@ async function createTarFile(executionEntry) {
       },
       [executionEntry.assignment.resources, executionEntry.zipFilePath, path.join("scripts", executionEntry.zipFilePath.replaceAll(path.sep, '.') + ".script.sh")]
     );
-    logger.debug(`Tar archive created successfully at: ${zipPath}`);
+    logger.info(`Tar archive created successfully at: ${zipPath}`);
     return zipPath;
   } catch (error) {
     logger.error('Error creating tar archive:', error);
