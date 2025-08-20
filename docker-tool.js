@@ -41,6 +41,7 @@ async function createTarFile(executionEntry) {
     return zipPath;
   } catch (error) {
     logger.error('Error during tar archive creation:', error);
+    logger.error(error.stack);
     await saveErrorLogFile(executionEntry, error);
     return "";
   }
