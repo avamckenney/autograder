@@ -89,6 +89,8 @@ async function createAndStartContainer(executionEntry) {
         let tarPath = await createTarFile(executionEntry);
         logger.debug("Tar file created for execution entry: " + executionEntry._id);
         logger.debug(`Tar path: ${tarPath}`);
+        logger.info("Tar file created for execution entry: " + executionEntry._id);
+        logger.info(`Tar path: ${tarPath}`);
         if(tarPath === ""){
             throw Error("Could not create tar file for execution entry " + executionEntry._id);
         }
