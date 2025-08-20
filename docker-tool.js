@@ -40,7 +40,7 @@ async function createTarFile(executionEntry) {
     logger.info(`Tar archive created successfully at: ${zipPath}`);
     return zipPath;
   } catch (error) {
-    logger.error('Error creating tar archive:', error);
+    logger.error('Error during tar archive creation:', error);
     await saveErrorLogFile(executionEntry, error);
     return "";
   }

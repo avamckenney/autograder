@@ -90,7 +90,7 @@ async function executeAssignments(threadNumber) {
             assignmentMap.delete(key);
             let assignment = entry.assignment;
             try {
-                logger.info(`Thread ${threadNumber} Processing assignment ${assignment.name} from date ${entry.createdAt}`);
+                logger.info(`Thread ${threadNumber} Processing ${entry._id}, assignment ${assignment.name} from date ${entry.createdAt}`);
                 //logger.info(`Thread ${threadNumber} Assignment path: ${assignment.resources}`);
                 //logger.info(`Thread ${threadNumber} Submission path: ${entry.zipFilePath}`);
                 //logger.info(`Thread ${threadNumber} Command: ${assignment.command}`);
