@@ -181,9 +181,14 @@ async function createAndStartContainer(executionEntry) {
 }
 
 async function saveErrorLogFile(executionEntry, error){
+  let errorString = error.toString('utf8') + "\n\nStack Trace:\n" + error.stack;
+  if (error.message) {
+    errorString += "Error occurred during execution: " + error.message + "\n\n" + errorString;
+  }
+
   logger.error("Saving error log execution: " + executionEntry._id);
   let logFilePath = path.join(LOGS_OUTPUT_DIR, 'logs-' + executionEntry._id + '-error.txt');
-  await fsPromises.writeFile(logFilePath, error.toString('utf8'));
+  await fsPromises.writeFile(logFilePath, errorString);
 }
 
 fs.mkdirSync("scripts", { recursive: true })
