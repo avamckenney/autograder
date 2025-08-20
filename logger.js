@@ -81,17 +81,17 @@ const betterStackTransport = pino.transport({
 //},
 //pinoTransport);
 //pinoTransport)
+ const pretty = require('pino-pretty');
+// Create a pretty stream
+    const prettyStream = pretty({
+        colorize: true // Enable colorized output
+    });
 
-const logger = pino({
-          transport: {
-            target: 'pino-pretty',
-            options: {
-              colorize: true, // Enable colorful output
-              level: "trace"
-            },
-          },
-        });
-
+    // Create the logger, piping output to the pretty stream
+    const logger = pino({
+        // Pino options (e.g., level)
+        level: 'info'
+    }, prettyStream);
 
 
 
