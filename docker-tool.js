@@ -15,6 +15,7 @@ const docker = new Docker();
 async function createTarFile(executionEntry) {
   try {
     logger.debug(`Creating tar file for execution entry: ${executionEntry._id}`);
+    
     let script = "";
     script += "unzip ../" + executionEntry.zipFilePath + " -d ./\n";
     script += "unzip -o ../" + executionEntry.assignment.resources + " -d ./\n";
@@ -23,9 +24,12 @@ async function createTarFile(executionEntry) {
     script += "mv feedback.txt " + "feedback-" + executionEntry._id + ".txt\n";
     script += "mv grade.txt " + "grade-" + executionEntry._id + ".txt\n";
     //script += "ls -l\n";
+    logger.debug("Writing script to file for execution entry: " + executionEntry._id);
     await fsPromises.writeFile(path.join("scripts", executionEntry.zipFilePath.replaceAll(path.sep, '.') + ".script.sh"), script);
+    logger.debug("Script written to file for execution entry: " + executionEntry._id);
 
     let zipPath = executionEntry.zipFilePath + ".data.tar.gz";
+    logger.debug(`Creating tar archive at: ${zipPath}`);
     await tar.create(
       {
         gzip: true,

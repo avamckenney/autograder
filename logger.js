@@ -32,7 +32,7 @@ const pinoTransport = pino.transport({
     ]
 });
 
-const consoleTransport = pino.transport({
+/*const consoleTransport = pino.transport({
     target: 'pino-pretty',
         level: "debug",
     options: {
@@ -62,10 +62,11 @@ const betterStackTransport = pino.transport({
         sourceToken: 'nC9ECehHxhoWLH5KTUaiZmaA',
         options: { endpoint: 'https://s1448634.eu-nbg-2.betterstackdata.com' }
     },
-});
+});*/
 
 const logger = pino({
-  level: process.env.PINO_LOG_LEVEL || 'trace',
+  //level: process.env.PINO_LOG_LEVEL || 'trace',
+  level: 'trace',
   /*formatters: {
     level: (label) => {
       return { level: label.toUpperCase() };
