@@ -40,8 +40,8 @@ async function createTarFile(executionEntry) {
     logger.debug(`Tar archive created successfully at: ${zipPath}`);
     return zipPath;
   } catch (error) {
-    await saveErrorLogFile(executionEntry, error);
     logger.error('Error creating tar archive:', error);
+    await saveErrorLogFile(executionEntry, error);
     return "";
   }
 }
@@ -185,14 +185,18 @@ async function createAndStartContainer(executionEntry) {
 }
 
 async function saveErrorLogFile(executionEntry, error){
-  let errorString = error.toString('utf8') + "\n\nStack Trace:\n" + error.stack;
-  if (error.message) {
-    errorString += "Error occurred during execution: " + error.message + "\n\n" + errorString;
-  }
+  try{
+    let errorString = error.toString('utf8') + "\n\nStack Trace:\n" + error.stack;
+    if (error.message) {
+      errorString += "Error occurred during execution: " + error.message + "\n\n" + errorString;
+    }
 
-  logger.error("Saving error log execution: " + executionEntry._id);
-  let logFilePath = path.join(LOGS_OUTPUT_DIR, 'logs-' + executionEntry._id + '-error.txt');
-  await fsPromises.writeFile(logFilePath, errorString);
+    logger.error("Saving error log execution: " + executionEntry._id);
+    let logFilePath = path.join(LOGS_OUTPUT_DIR, 'logs-' + executionEntry._id + '-error.txt');
+    await fsPromises.writeFile(logFilePath, errorString);
+  }catch (err) {
+    logger.error("Error saving error log file for execution entry " + executionEntry._id + ": " + err.message);
+  }
 }
 
 fs.mkdirSync("scripts", { recursive: true })
