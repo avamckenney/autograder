@@ -146,6 +146,8 @@ async function analyseResults(){
 }
 
 async function runTest(){
+    fs.rmdirSync(loadTestZipDir, { recursive: true, force: true });
+    fs.mkdirSync(loadTestZipDir, { recursive: true })
     await mongoose.connect('mongodb://127.0.0.1:27017/autograderwebapp');
     await fsPromises.rmdir(loadTestZipDir, { recursive: true, force: true }).catch(() => {});
     await fsPromises.mkdir(loadTestZipDir, { recursive: true });
