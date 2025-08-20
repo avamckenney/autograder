@@ -59,9 +59,10 @@ async function clearExistingContainer(executionEntry){
     await existingContainer.remove({force: true});
     logger.debug(`Removed existing container: ${containerName}`);
   } catch (err) {
-    await saveErrorLogFile(executionEntry, err);
+    console.error("Status code: " + err.statusCode);
     if (err.statusCode === 404) { // Ignore not found error
       logger.error(`Error removing existing container: ${containerName}`, err);
+      await saveErrorLogFile(executionEntry, err);
     } else {
       logger.debug(`No existing container named ${containerName} found.`);
     }
