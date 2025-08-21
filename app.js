@@ -17,8 +17,15 @@ const executionModel = mongoose.model('Execution', require('./model/ExecutionMod
 var indexRouter = require('./routes/index');
 
 var app = express();
-app.set("trust proxy", true);
 
+//proxy stuff
+app.set("trust proxy", true);
+app.use((req, res, next) => {
+  res.locals.baseUrl = req.get("X-Forwarded-Prefix") || "";
+  next();
+});
+
+//logger
 app.use(
   pinoHTTP({
     logger,
@@ -64,7 +71,7 @@ app.use(session({
 //figure out cookie details
 app.use(passport.authenticate('session'));  
 
-app.post('/login', passport.authenticate('local', {failureRedirect: '/login.html'}), function(req, res) {
+app.post('/login', passport.authenticate('local', {failureRedirect: res.locals.baseUrl + '/login.html'}), function(req, res) {
   // Successful authentication, redirect home.
   logger.info("User logged in successfully:", req.user);
   if(req.user){
@@ -89,14 +96,8 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-app.use((req, res, next) => {
-  res.locals.baseUrl = req.get("X-Forwarded-Prefix") || "";
-  next();
-});
-
 
 app.get("/login.html", (req, res) => {
-  console.log("baseurl: " + req.baseUrl);
   res.render("login");
 }); 
 
