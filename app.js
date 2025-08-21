@@ -71,7 +71,7 @@ app.use(session({
 //figure out cookie details
 app.use(passport.authenticate('session'));  
 
-app.post('/login', passport.authenticate('local', {failureRedirect: '/grader/login.html'}), function(req, res) {
+app.post('/login', passport.authenticate('local', {failureRedirect: + '/grader/login.html'}), function(req, res) {
   // Successful authentication, redirect home.
   logger.info("User logged in successfully:", req.user);
   if(req.user){
