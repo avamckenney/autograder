@@ -28,14 +28,14 @@ html
             br
             .form-section
                 h2 Create a Submission
-                form(action="" method="post" enctype="multipart/form-data")
+                form(action=baseUrl + "" method="post" enctype="multipart/form-data")
                     label(for="zipFile") Upload your zip file:
                     input(type="file" name="zipFile" id="zipFile" accept=".zip" required)
                     button(type="submit") Submit
 
             .form-section
                 h2 Update Assignment
-                form(action="/users/" + assignment.creator.username + "/assignments/" + assignment.name + "/update" method="POST" enctype="multipart/form-data")
+                form(action=baseUrl + "/users/" + assignment.creator.username + "/assignments/" + assignment.name + "/update" method="POST" enctype="multipart/form-data")
                     label(for="name") Assignment Name (cannot be changed):
                     input(type="text" id="name" name="name" value="" + assignment.name readonly)
                     
@@ -81,7 +81,7 @@ html
             
             .form-section
                 h2 Export Grades
-                form(action="/users/" + assignment.creator.username + "/assignments/" + assignment.name + "/grades" method="POST" enctype="multipart/form-data")
+                form(action=baseUrl + "/users/" + assignment.creator.username + "/assignments/" + assignment.name + "/grades" method="POST" enctype="multipart/form-data")
                     label(for="grademode") Grade Mode:
                     select(name="grademode", id="grademode")
                         option(value="highest") Highest Grade
@@ -135,10 +135,10 @@ html
             br
             .form-section
                 h2 Archive and Delete Assignment
-                form(action="/users/" + assignment.creator.username + "/assignments/" + assignment.name + "/archive" method="POST")
+                form(action=baseUrl + "/users/" + assignment.creator.username + "/assignments/" + assignment.name + "/archive" method="POST")
                     p Archiving will create and download a zip containing all submissions, feedback, and resources.
                     button(type="submit") Archive Assignment
-                form(action="/users/" + assignment.creator.username + "/assignments/" + assignment.name + "/delete" method="POST")
+                form(action=baseUrl + "/users/" + assignment.creator.username + "/assignments/" + assignment.name + "/delete" method="POST")
                     p(style="color: red;")
                         |  Warning: Deleting an assignment will remove all submissions, feedback, and resources associated
                     p(style="color: red;")
