@@ -90,6 +90,7 @@ const limiter = rateLimit({
 app.use(limiter);
 
 app.get("/login.html", (req, res) => {
+  console.log("baseurl: " + req.baseUrl);
   res.render("login", { baseUrl: req.baseUrl });
 }); 
 
