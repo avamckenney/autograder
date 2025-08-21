@@ -89,9 +89,15 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
+app.use((req, res, next) => {
+  res.locals.baseUrl = req.get("X-Forwarded-Prefix") || "";
+  next();
+});
+
+
 app.get("/login.html", (req, res) => {
   console.log("baseurl: " + req.baseUrl);
-  res.render("login", { baseUrl: req.baseUrl });
+  res.render("login");
 }); 
 
 app.use("/", function(req, res, next) {
