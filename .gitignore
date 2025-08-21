@@ -22,3 +22,4 @@ ubuntu-install/
 __pycache__/
 example-solutions/*/
 .vscode/
+feedback/

@@ -17,6 +17,7 @@ const executionModel = mongoose.model('Execution', require('./model/ExecutionMod
 var indexRouter = require('./routes/index');
 
 var app = express();
+app.set("trust proxy", true);
 
 app.use(
   pinoHTTP({
