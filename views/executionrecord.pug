@@ -1,7 +1,7 @@
 html
     head
         title View Execution Record
-        link(rel='stylesheet', href='/stylesheets/style.css')
+        link(rel='stylesheet', href=baseUrl + '/stylesheets/style.css')
     body
         include header.pug
         if execution.status == 'pending'
@@ -12,11 +12,11 @@ html
                 ul
                     li
                         strong User: 
-                        a(href="/users/" + execution.studentName)
+                        a(href=baseUrl + "/users/" + execution.studentName)
                             |  #{execution.studentName}
                     li
                         strong Assignment: 
-                        a(href="/users/" + execution.assignment.creator.username + "/assignments/" + execution.assignment.name)
+                        a(href=baseUrl + "/users/" + execution.assignment.creator.username + "/assignments/" + execution.assignment.name)
                             |  #{execution.assignment.name}
                     li
                         strong Assignment Creator: 
@@ -76,9 +76,9 @@ html
                 else
                     pre(id="execution-feedback") No feedback available.    
                 br
-                a(href="/executions/" + execution._id + "/zip") Download Submission Zip
+                a(href=baseUrl + "/executions/" + execution._id + "/zip") Download Submission Zip
                 br
-                a(href="/executions/" + execution._id + "/summary") Download Execution Summary
+                a(href=baseUrl + "/executions/" + execution._id + "/summary") Download Execution Summary
                 br
                 br
                 

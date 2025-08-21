@@ -13,7 +13,7 @@ html
                 each execution in executions
                     div.submission                    
                         | Assignment: 
-                        a(href="/users/" + execution.assignment.creator.username + "/assignments/" + execution.assignment.name)
+                        a(href=baseUrl + "/users/" + execution.assignment.creator.username + "/assignments/" + execution.assignment.name)
                             |  #{execution.assignment.name}
                         br
                         if execution.status === 'completed'
@@ -37,7 +37,7 @@ html
                             br
                             | Submitted At: #{execution.createdAt}
                         br
-                        a(href="/executions/" + execution.id) View Details
+                        a(href=baseUrl + "/executions/" + execution.id) View Details
                         br
                         br
             else

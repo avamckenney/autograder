@@ -2,7 +2,7 @@ doctype html
 html
     head
         title Add Assignment
-        link(rel='stylesheet', href='/stylesheets/style.css')
+        link(rel='stylesheet', href=baseUrl + '/stylesheets/style.css')
     body
         include header.pug
         .container
@@ -56,5 +56,5 @@ html
                             button(type="submit") Submit
             else
                 p You must be logged in to add an assignment.
-                a(href="/login") Login
-        script(src="/javascripts/assignmentcreation.js")
+                a(href=baseUrl + "/login") Login
+        script(src=baseUrl + "/javascripts/assignmentcreation.js")

@@ -2,7 +2,7 @@ doctype html
 html
     head
         title Assignment - #{assignment.name}
-        link(rel='stylesheet', href='/stylesheets/style.css')
+        link(rel='stylesheet', href=baseUrl + '/stylesheets/style.css')
     body
         include header.pug
         .container
@@ -50,7 +50,7 @@ html
                     br
                     br
                     label(for="resourcesZip") Resources Zip File (leave empty to keep current): 
-                        a(href="/users/" + assignment.creator.username + "/assignments/" + assignment.name + "/resources")
+                        a(href=baseUrl + "/users/" + assignment.creator.username + "/assignments/" + assignment.name + "/resources")
                             | Download Current Resources
                     input(type="file" id="resourcesZip" name="resourcesZip" accept=".zip")
                         
@@ -127,7 +127,7 @@ html
                         br
                         | <strong>Submitted At:</strong> #{submission.createdAt}
                         br
-                        a(href="/executions/" + submission.id) View Details
+                        a(href=baseUrl + "/executions/" + submission.id) View Details
                         br
                         br
             else
