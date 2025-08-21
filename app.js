@@ -89,11 +89,15 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
+app.get("/login.html", (req, res) => {
+  res.render("login", { baseUrl: req.baseUrl });
+}); 
+
 app.use("/", function(req, res, next) {
   if(!req.isAuthenticated() && req.path !== "/login.html" && req.path !== "/login") {
     //console.log("User is not authenticated, redirecting to login");
     logger.warn("User is not authenticated, redirecting to login");
-    return res.redirect("/login.html", {baseUrl: req.baseUrl});
+    return res.redirect("/login.html");
   }
   next();
 });
