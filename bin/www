@@ -9,6 +9,7 @@ var debug = require('debug')('autograder-web-app:server');
 var http = require('http');
 const mongoose = require('mongoose');
 const logger = require('../logger'); // Import the logger module
+const fs = require("fs");
 
 /**
  * Get port from environment and store in Express.
