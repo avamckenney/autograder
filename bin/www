@@ -14,12 +14,25 @@ const logger = require('../logger'); // Import the logger module
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || '443');
 app.set('port', port);
+
+http.createServer(function (req, res) {
+    res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url});
+    res.end();
+}).listen(80);
+
+
 /**
  * Create HTTP server.
  */
-var server = http.createServer(app);
+const https = require('https')
+var server = https.createServer({
+			key: fs.readFileSync('avamckenney.scs.carleton.ca.key'),
+			cert: fs.readFileSync('avamckenney.scs.carleton.ca.crt')
+		}, app)
+
+//http.createServer(app);
 
 main().catch(err => console.log(err));
 
