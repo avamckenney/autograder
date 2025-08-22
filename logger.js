@@ -2,7 +2,6 @@ const pino = require('pino');
 const path = require('path');
 const pinoHttp = require('pino-http');
 const DEFAULT_LOG_LEVEL = 'debug'; // Default log level
-const RotatingFile = require('pino-rotating-file');
 
 
 const transport = pino.transport({
@@ -20,13 +19,12 @@ const transport = pino.transport({
         }
     },
     {
-        target: 'pino-rotating-file',   // rotating file transport
+        target: 'pino/file',
         level: DEFAULT_LOG_LEVEL,
         options: {
-            path: path.join(__dirname, 'app.log'),
-            interval: '1d',          // daily rotation
-            maxFiles: 7,             // keep last 7 logs
-            compress: true           // gzip old logs
+            destination: path.join(__dirname, `app.log`),
+            mkdir: true,
+            append: true,
         }
     },
     {
@@ -73,7 +71,7 @@ const logger = pino(
       level(label) {
         return { level: label }; // log level as word
       }
-    }
+    },
   },
   transport
 );
