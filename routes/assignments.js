@@ -13,11 +13,6 @@ const dateFNS = require('date-fns');
 const admZip = require('adm-zip');
 const logger = require('../logger').logger; // Assuming logger.js is in the same directory
 
-logger.debug("test assignment debug");
-logger.info("test assignment info");
-logger.error("test assignment error");
-logger.trace("test assignment trace");
-
 const mongoose = require('mongoose');
 //const { arch } = require('os');
 const executionModel = mongoose.model('Execution', require('../model/ExecutionModel'));
