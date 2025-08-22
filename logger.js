@@ -67,11 +67,11 @@ const logger = pino(
       req: reqSerializer,
       res: resSerializer
     },
-    formatters: {
+    /*formatters: {
       level(label) {
         return { level: label }; // log level as word
       }
-    },
+    },*/
   },
   transport
 );
