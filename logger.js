@@ -62,8 +62,8 @@ const logger = pino(
       ...pino.stdSerializers,
       req: reqSerializer,
       res: resSerializer
-    }
-  },*/
+    }*/
+  },
   transport
 );
 
