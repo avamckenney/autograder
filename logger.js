@@ -42,9 +42,7 @@ const logger = pino(
     },
     pino.transport({
         targets: [
-            { target: 'pino-pretty', level: DEFAULT_LOG_LEVEL, options: consoleTransport.opts.options },
-            { target: 'pino/file', level: DEFAULT_LOG_LEVEL, options: fileTransport.opts.options },
-            { target: '@logtail/pino', level: DEFAULT_LOG_LEVEL, options: betterStackTransport.opts.options }
+            consoleTransport, fileTransport, betterStackTransport
         ]
     })
 );
