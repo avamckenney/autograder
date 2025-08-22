@@ -7,7 +7,7 @@ const authCheck = require("./middleware/checkauth");
 const logger = require('./logger'); // Import the logger module
 const pinoHTTP = require('pino-http');
 const assignmentExecutor = require('./assignmentexecutor'); // Import the assignment executor module
-
+const config = require("./config.json");
 
 const mongoose = require('mongoose');
 const userModel = mongoose.model('User', require('./model/UserModel'));
@@ -43,7 +43,7 @@ var LocalStrategy = require('passport-local');
 var session = require('express-session');
 var mongoDBSessionStore = require('connect-mongodb-session')(session);
 var sessionStore = new mongoDBSessionStore({
-  uri: 'mongodb://127.0.0.1:27017/autograderwebappsessions',
+  uri: `mongodb://${config.mongoAuth.user}:${config.mongoAuth.password}@${config.mongoAddress}/${config.sessionsDatabase}`,
   collection: 'sessions'
 });
 
