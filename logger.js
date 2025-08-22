@@ -41,16 +41,18 @@ const transport = pino.transport({
 // ---- Custom serializers ----
 const reqSerializer = (req) => {
   const s = pino.stdSerializers.req(req);
-  if (s && s.headers) {
-    delete s.headers.cookie;
+  if (s?.headers) {
+    const { cookie, ...safeHeaders } = s.headers;
+    return { ...s, headers: safeHeaders };
   }
   return s;
 };
 
 const resSerializer = (res) => {
   const s = pino.stdSerializers.res(res);
-  if (s && s.headers) {
-    delete s.headers['set-cookie'];
+  if (s?.headers) {
+    const { 'set-cookie': _setCookie, ...safeHeaders } = s.headers;
+    return { ...s, headers: safeHeaders };
   }
   return s;
 };
@@ -58,22 +60,22 @@ const resSerializer = (res) => {
 const logger = pino(
   {
     level: 'debug',
-    /*serializers: {
+    serializers: {
       ...pino.stdSerializers,
       req: reqSerializer,
       res: resSerializer
-    }*/
+    }
   },
   transport
 );
 
 const httpLogger = pinoHttp({
   logger,
-  /*serializers: {
+  serializers: {
     ...pino.stdSerializers,
     req: reqSerializer,
     res: resSerializer
-  }*/
+  }
 });
 
 logger.debug("test debug");
