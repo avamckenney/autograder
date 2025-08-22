@@ -48,11 +48,9 @@ async function main() {
 
     await mongoose.connect(`mongodb://${config.mongoAddress}/${config.mongoDatabase}`,
         {
-        "auth": {
-          "authSource": config.mongoDatabase
-        },
         "user": config.mongoAuth.user,
         "pass": config.mongoAuth.password,
+        "authSource": config.mongoDatabase,
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useCreateIndex: true
@@ -65,11 +63,9 @@ async function main() {
     //await mongoose.connect(`mongodb://${config.mongoAuth.user}:${config.mongoAuth.password}@${config.mongoAddress}/${config.mongoDatabase}`);
     await mongoose.connect(`mongodb://${config.mongoAddress}/${config.mongoDatabase}`,
         {
-        "auth": {
-          "authSource": config.mongoDatabase
-        },
         "user": config.mongoAuth.user,
         "pass": config.mongoAuth.password,
+        "authSource": config.mongoDatabase,
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useCreateIndex: true
