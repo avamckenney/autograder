@@ -2,7 +2,7 @@ doctype html
 html
     head
         title Assignment - #{assignment.name}
-        link(rel='stylesheet', href=baseUrl + '/stylesheets/style.css')
+        link(rel='stylesheet', href='/stylesheets/style.css')
     body
         include header.pug
         .container
@@ -36,7 +36,7 @@ html
                         div
                             p(style="color:red")
                                 | Warning: This assignment will apply a penalty after you have exceeded the number of free submissions (#{assignment.freeSubmissions}). The penalty for each extra submission will be #{assignment.extraSubmissionsPenalty} #{assignment.extraSubmissionsPenaltyUnit}. So far you have made #{numSubmissions} submission(s). You have #{(assignment.freeSubmissions - numSubmissions) > 0 ? (assignment.freeSubmissions - numSubmissions) : "no"} free submissions remaining.
-                    form(action=baseUrl + "" method="post" enctype="multipart/form-data")
+                    form(action="" method="post" enctype="multipart/form-data")
                         label(for="zipFile") Upload your zip file:
                         input(type="file" name="zipFile" id="zipFile" accept=".zip" required)
                         button(type="submit") Submit

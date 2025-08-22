@@ -19,11 +19,6 @@ var indexRouter = require('./routes/index');
 var app = express();
 
 //proxy stuff
-app.set("trust proxy", true);
-app.use((req, res, next) => {
-  res.locals.baseUrl = req.get("X-Forwarded-Prefix") || "";
-  next();
-});
 
 //logger
 app.use(
@@ -71,7 +66,7 @@ app.use(session({
 //figure out cookie details
 app.use(passport.authenticate('session'));  
 
-app.post('/login', passport.authenticate('local', {failureRedirect: + '/grader/login.html'}), function(req, res) {
+app.post('/login', passport.authenticate('local', {failureRedirect: + '/login.html'}), function(req, res) {
   // Successful authentication, redirect home.
   logger.info("User logged in successfully:", req.user);
   if(req.user){

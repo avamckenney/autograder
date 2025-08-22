@@ -2,7 +2,7 @@ doctype html
 html
     head
         title Assignment - #{assignment.name}
-        link(rel='stylesheet', href=baseUrl + '/stylesheets/style.css')
+        link(rel='stylesheet', href='/stylesheets/style.css')
     body
         include header.pug
         .container
@@ -28,14 +28,14 @@ html
             br
             .form-section
                 h2 Create a Submission
-                form(action=baseUrl + "" method="post" enctype="multipart/form-data")
+                form(action="" method="post" enctype="multipart/form-data")
                     label(for="zipFile") Upload your zip file:
                     input(type="file" name="zipFile" id="zipFile" accept=".zip" required)
                     button(type="submit") Submit
 
             .form-section
                 h2 Update Assignment
-                form(action=baseUrl + "/users/" + assignment.creator.username + "/assignments/" + assignment.name + "/update" method="POST" enctype="multipart/form-data")
+                form(action="/users/" + assignment.creator.username + "/assignments/" + assignment.name + "/update" method="POST" enctype="multipart/form-data")
                     label(for="name") Assignment Name (cannot be changed):
                     input(type="text" id="name" name="name" value="" + assignment.name readonly)
                     
@@ -50,7 +50,7 @@ html
                     br
                     br
                     label(for="resourcesZip") Resources Zip File (leave empty to keep current): 
-                        a(href=baseUrl + "/users/" + assignment.creator.username + "/assignments/" + assignment.name + "/resources")
+                        a(href="/users/" + assignment.creator.username + "/assignments/" + assignment.name + "/resources")
                             | Download Current Resources
                     input(type="file" id="resourcesZip" name="resourcesZip" accept=".zip")
                         
@@ -81,7 +81,7 @@ html
             
             .form-section
                 h2 Export Grades
-                form(action=baseUrl + "/users/" + assignment.creator.username + "/assignments/" + assignment.name + "/grades" method="POST" enctype="multipart/form-data")
+                form(action="/users/" + assignment.creator.username + "/assignments/" + assignment.name + "/grades" method="POST" enctype="multipart/form-data")
                     label(for="grademode") Grade Mode:
                     select(name="grademode", id="grademode")
                         option(value="highest") Highest Grade
@@ -127,7 +127,7 @@ html
                         br
                         | <strong>Submitted At:</strong> #{submission.createdAt}
                         br
-                        a(href=baseUrl + "/executions/" + submission.id) View Details
+                        a(href="/executions/" + submission.id) View Details
                         br
                         br
             else
@@ -135,10 +135,10 @@ html
             br
             .form-section
                 h2 Archive and Delete Assignment
-                form(action=baseUrl + "/users/" + assignment.creator.username + "/assignments/" + assignment.name + "/archive" method="POST")
+                form(action="/users/" + assignment.creator.username + "/assignments/" + assignment.name + "/archive" method="POST")
                     p Archiving will create and download a zip containing all submissions, feedback, and resources.
                     button(type="submit") Archive Assignment
-                form(action=baseUrl + "/users/" + assignment.creator.username + "/assignments/" + assignment.name + "/delete" method="POST")
+                form(action="/users/" + assignment.creator.username + "/assignments/" + assignment.name + "/delete" method="POST")
                     p(style="color: red;")
                         |  Warning: Deleting an assignment will remove all submissions, feedback, and resources associated
                     p(style="color: red;")

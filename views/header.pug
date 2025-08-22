@@ -1,11 +1,11 @@
 
 div.topnav
-  a(href=baseUrl + "/") Home
+  a(href="/") Home
   if user
     if user.role === 'admin'
-      a(href=baseUrl + "/create-assignment") Create Assignment
-    a(href=baseUrl + "/users/" + user.username) Your Profile
-    a(href=baseUrl + "/users/" + user.username + "/password") Change Password
-    a(href=baseUrl + "/logout") Logout (currently logged in as #{user.username})
+      a(href="/create-assignment") Create Assignment
+    a(href="/users/" + user.username) Your Profile
+    a(href="/users/" + user.username + "/password") Change Password
+    a(href="/logout") Logout (currently logged in as #{user.username})
 
     

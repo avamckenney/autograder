@@ -3,7 +3,7 @@ doctype html
 html
     head
         title User Profile
-        link(rel='stylesheet', href=baseUrl + '/stylesheets/style.css')
+        link(rel='stylesheet', href='/stylesheets/style.css')
     body
         include header.pug
         div.maincontent
@@ -13,7 +13,7 @@ html
                 each execution in executions
                     div.submission                    
                         | Assignment: 
-                        a(href=baseUrl + "/users/" + execution.assignment.creator.username + "/assignments/" + execution.assignment.name)
+                        a(href="/users/" + execution.assignment.creator.username + "/assignments/" + execution.assignment.name)
                             |  #{execution.assignment.name}
                         br
                         if execution.status === 'completed'
@@ -37,7 +37,7 @@ html
                             br
                             | Submitted At: #{execution.createdAt}
                         br
-                        a(href=baseUrl + "/executions/" + execution.id) View Details
+                        a(href="/executions/" + execution.id) View Details
                         br
                         br
             else

@@ -2,7 +2,7 @@ doctype html
 html
     head
         title User Profile
-        link(rel='stylesheet', href=baseUrl + '/stylesheets/style.css')
+        link(rel='stylesheet', href='/stylesheets/style.css')
     body
         include header.pug
         div.maincontent
@@ -13,14 +13,14 @@ html
                     div
                         | Assignment: #{assignment.name}
                         br
-                        a(href=baseUrl + "/users/" + user.username + "/assignments/" + assignment.name) View Details
+                        a(href="/users/" + user.username + "/assignments/" + assignment.name) View Details
                         br
                         br
                 br
-                a(href=baseUrl + "/create-assignment") Create a new assignment.
+                a(href="/create-assignment") Create a new assignment.
             else
                 p You haven't created any assignments. 
-                    a(href=baseUrl + "/create-assignment") Create one now!
+                    a(href="/create-assignment") Create one now!
 
             br
             br
@@ -47,7 +47,7 @@ html
                             br
                             | Submitted At: #{execution.createdAt}
                         br
-                        a(href=baseUrl + "/executions/" + execution.id) View Details
+                        a(href="/executions/" + execution.id) View Details
                         br
                         br
             else

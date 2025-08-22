@@ -50,7 +50,7 @@ async function changePassword(current, newPass, messageDiv){
             messageDiv.classList.add('success');
             document.getElementById('changePasswordForm').reset();
             setTimeout(() => {
-                window.location.href = 'grader/login.html'; // Redirect to login page after success
+                window.location.href = '/login.html'; // Redirect to login page after success
             }, 2000); // Redirect after 2 seconds   
         }
     } catch (error) {
