@@ -2,7 +2,7 @@ const pino = require('pino');
 const path = require('path');
 const pinoHttp = require('pino-http');
 const DEFAULT_LOG_LEVEL = 'debug'; // Default log level
-
+const config = require("./config");
 
 const transport = pino.transport({
   targets: [
@@ -31,7 +31,7 @@ const transport = pino.transport({
         target: '@logtail/pino',
         options: { 
             level: DEFAULT_LOG_LEVEL,
-            sourceToken: 'nC9ECehHxhoWLH5KTUaiZmaA',
+            sourceToken: config.betterStackToken,
             options: { endpoint: 'https://s1448634.eu-nbg-2.betterstackdata.com' }
         },
     }
