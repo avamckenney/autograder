@@ -1,6 +1,6 @@
 const pino = require('pino');
 const path = require('path');
-const pinoHTTP = require('pino-http');
+const pinoHttp = require('pino-http');
 const DEFAULT_LOG_LEVEL = 'debug'; // Default log level
 
 
