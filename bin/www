@@ -49,7 +49,7 @@ async function main() {
     await mongoose.connect(`mongodb://${config.mongoAddress}/${config.mongoDatabase}`,
         {
         "auth": {
-          "authSource": "config.mongoDatabase"
+          "authSource": config.mongoDatabase
         },
         "user": config.mongoAuth.user,
         "pass": config.mongoAuth.password
