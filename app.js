@@ -114,6 +114,7 @@ app.use("/", function(req, res, next) {
 
 app.use("/", function(req, res, next) {
   logger.info("Request received at: " + new Date().toISOString());
+  logger.info("Request from: " + req.ip);
   logger.info("Request method: " + req.method);
   logger.info("Request path: " + req.path);
   logger.info("Request user: " + (req.user ? req.user.username : "Not authenticated"));
