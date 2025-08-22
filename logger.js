@@ -47,7 +47,7 @@ const logger = pino(
 logger.debug("test debug");
 logger.info("test info");
 logger.error("test error");
-logger.trance("test trace");
+logger.trace("test trace");
 
 
 //This one works but only for console
