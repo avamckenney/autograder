@@ -62,10 +62,17 @@ const resSerializer = (res) => {
 const logger = pino(
   {
     level: 'debug',
+    timestamp: () => `,"time":"${new Date().toISOString()}"`, // formatted ISO time
+    base: null, // removes pid and hostname
     serializers: {
       ...pino.stdSerializers,
       req: reqSerializer,
       res: resSerializer
+    },
+    formatters: {
+      level(label) {
+        return { level: label }; // log level as word
+      }
     }
   },
   transport
