@@ -12,7 +12,7 @@
     "assignment-examples/*",
     "dockerfiles/*",
     "scripts/*",
-    "loadtest-progress.txt",    
+    "loadtest-progress.txt" 
   ],
   "verbose": true,
   "events": {
