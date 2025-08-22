@@ -3,61 +3,10 @@ const path = require('path');
 
 const DEFAULT_LOG_LEVEL = 'debug'; // Default log level
 
-const pinoTransport = pino.transport({
-    targets: [
-        {
-            target: 'pino-pretty',
-            options: {
-                colorize: true,
-                translateTime: 'SYS:standard',
-                ignore: 'pid,hostname',
-                levelFirst: true,
-                singleLine: true,
-                messageFormat: '{msg}',
-                level: DEFAULT_LOG_LEVEL, // Set the log level to debug
-                minimumLevel: DEFAULT_LOG_LEVEL, // Set the log level to debug
-            },
-        },
-        {
-            target: 'pino/file',
-            options: {
-                destination: path.join(__dirname, `app.log`),
-                mkdir: true,
-                append: true,
-                level: DEFAULT_LOG_LEVEL,
-                minimumLevel: DEFAULT_LOG_LEVEL, // Set the log level to debug
-            }
-        },
-        {
-            target: '@logtail/pino',
-            options: { 
-                sourceToken: 'nC9ECehHxhoWLH5KTUaiZmaA',
-                options: { endpoint: 'https://s1448634.eu-nbg-2.betterstackdata.com' },
-                level: DEFAULT_LOG_LEVEL, // Set the log level to debug
-                minimumLevel: DEFAULT_LOG_LEVEL, // Set the log level to debug
-            },
-        },
-    ]
-});
 
-console.log("Pino Log Level: " + (process.env.PINO_LOG_LEVEL || DEFAULT_LOG_LEVEL));
-
-const logger = pino({
-        level: process.env.PINO_LOG_LEVEL || DEFAULT_LOG_LEVEL,
-        formatters: {
-            level: (label) => {
-            return { level: label.toUpperCase() };
-            },
-        },
-    },
-  pinoTransport
-);
-
-
-
-/*const consoleTransport = pino.transport({
+const consoleTransport = pino.transport({
     target: 'pino-pretty',
-        level: "debug",
+        level: DEFAULT_LOG_LEVEL,
     options: {
         colorize: true,
         translateTime: 'SYS:standard',
@@ -70,7 +19,7 @@ const logger = pino({
 
 const fileTransport = pino.transport({
     target: 'pino/file',
-        level: "debug",
+        level: DEFAULT_LOG_LEVEL,
     options: {
         destination: path.join(__dirname, `app.log`),
         mkdir: true,
@@ -81,27 +30,24 @@ const fileTransport = pino.transport({
 const betterStackTransport = pino.transport({
     target: '@logtail/pino',
     options: { 
-        level: "debug",
+        level: DEFAULT_LOG_LEVEL,
         sourceToken: 'nC9ECehHxhoWLH5KTUaiZmaA',
         options: { endpoint: 'https://s1448634.eu-nbg-2.betterstackdata.com' }
     },
-});*/
+});
 
-//const logger = pino({
-  //level: process.env.PINO_LOG_LEVEL || 'trace',
-//  level: DEFAULT_LOG_LEVEL,
-  /*formatters: {
-    level: (label) => {
-      return { level: label.toUpperCase() };
+const logger = pino(
+    {
+        level: DEFAULT_LOG_LEVEL,
     },
-  },*/
-//},
-//pinoTransport);
-//pinoTransport)
-
-
-
-
+    pino.transport({
+        targets: [
+            { target: 'pino-pretty', level: DEFAULT_LOG_LEVEL, options: consoleTransport.opts.options },
+            { target: 'pino/file', level: DEFAULT_LOG_LEVEL, options: fileTransport.opts.options },
+            { target: '@logtail/pino', level: DEFAULT_LOG_LEVEL, options: betterStackTransport.opts.options }
+        ]
+    })
+);
 
 //This one works but only for console
 /*
