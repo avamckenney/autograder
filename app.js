@@ -66,6 +66,11 @@ app.use(session({
 //figure out cookie details
 app.use(passport.authenticate('session'));  
 
+
+app.get("/login.html", (req, res) => {
+  res.render("login");
+}); 
+
 app.post('/login', passport.authenticate('local', {failureRedirect: + '/login.html'}), function(req, res) {
   // Successful authentication, redirect home.
   logger.info("User logged in successfully:", req.user);
@@ -73,7 +78,7 @@ app.post('/login', passport.authenticate('local', {failureRedirect: + '/login.ht
     return res.redirect('/users/' + req.user.username); // Redirect to home page after successful login
   }
   logger.error("User login failed, redirecting to login page");
-  return res.redirect("/");
+  return res.redirect("/login.html");
 });
 passport.serializeUser(userModel.serializeUser());
 passport.deserializeUser(userModel.deserializeUser());
@@ -92,9 +97,7 @@ const limiter = rateLimit({
 app.use(limiter);
 
 
-app.get("/login.html", (req, res) => {
-  res.render("login");
-}); 
+
 
 app.use("/", function(req, res, next) {
   if(!req.isAuthenticated() && req.path !== "/login.html" && req.path !== "/login") {
