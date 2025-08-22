@@ -43,9 +43,11 @@ async function main() {
   if (process.env.NODE_ENV === 'production') {
     // Production-specific configurations (e.g., debug logging, different database)
     console.log('Running in production mode');
+    console.log(`mongodb://${config.mongoAuth.user}:********@${config.mongoAddress}/${config.mongoDatabase}`);
     await mongoose.connect(`mongodb://${config.mongoAuth.user}:${config.mongoAuth.password}@${config.mongoAddress}/${config.mongoDatabase}`);
   } else {
     // Development-specific configurations (e.g., optimized logging, different database)
+    console.log(`mongodb://${config.mongoAuth.user}:********@${config.mongoAddress}/${config.mongoDatabase}`);
     console.log('Running in development mode');
     await mongoose.connect(`mongodb://${config.mongoAuth.user}:${config.mongoAuth.password}@${config.mongoAddress}/${config.mongoDatabase}`);
   }

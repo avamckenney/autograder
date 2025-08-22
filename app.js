@@ -118,6 +118,7 @@ assignmentExecutor.startAssignmentProcessing().then(() => {
   logger.info("Assignment processing started successfully.");
 }).catch((err) => {
   logger.error("Error starting assignment processing:", err.message);
+  logger.error(err.stack);
   process.exit(1); // Exit the process if assignment processing fails to start
 });
 
