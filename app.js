@@ -49,7 +49,7 @@ var sessionStore = new mongoDBSessionStore({
 
 passport.use(new LocalStrategy(userModel.authenticate()));
 app.use(session({
-    secret: 'ladeedah', //TODO: update this to a more secure secret
+    secret: config.sessionSecret, //TODO: update this to a more secure secret
     resave: true,
     store: sessionStore,
     saveUninitialized: false,
