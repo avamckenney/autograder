@@ -1,7 +1,7 @@
 const pino = require('pino');
 const path = require('path');
 
-const DEFAULT_LOG_LEVEL = 'trace'; // Default log level
+const DEFAULT_LOG_LEVEL = 'debug'; // Default log level
 
 const pinoTransport = pino.transport({
     targets: [
@@ -25,6 +25,7 @@ const pinoTransport = pino.transport({
                 mkdir: true,
                 append: true,
                 level: DEFAULT_LOG_LEVEL,
+                minimumLevel: DEFAULT_LOG_LEVEL, // Set the log level to debug
             }
         },
         {
@@ -33,10 +34,26 @@ const pinoTransport = pino.transport({
                 sourceToken: 'nC9ECehHxhoWLH5KTUaiZmaA',
                 options: { endpoint: 'https://s1448634.eu-nbg-2.betterstackdata.com' },
                 level: DEFAULT_LOG_LEVEL, // Set the log level to debug
+                minimumLevel: DEFAULT_LOG_LEVEL, // Set the log level to debug
             },
         },
     ]
 });
+
+console.log("Pino Log Level: " + (process.env.PINO_LOG_LEVEL || DEFAULT_LOG_LEVEL));
+
+const logger = pino({
+        level: process.env.PINO_LOG_LEVEL || DEFAULT_LOG_LEVEL,
+        formatters: {
+            level: (label) => {
+            return { level: label.toUpperCase() };
+            },
+        },
+    },
+  pinoTransport
+);
+
+
 
 /*const consoleTransport = pino.transport({
     target: 'pino-pretty',
@@ -81,6 +98,13 @@ const betterStackTransport = pino.transport({
 //},
 //pinoTransport);
 //pinoTransport)
+
+
+
+
+
+//This one works but only for console
+/*
  const pretty = require('pino-pretty');
 // Create a pretty stream
     const prettyStream = pretty({
@@ -94,6 +118,6 @@ const betterStackTransport = pino.transport({
         level: 'debug'
     }, prettyStream);
 
-
+*/
 
 module.exports = logger;
