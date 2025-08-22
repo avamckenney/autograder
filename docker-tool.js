@@ -12,6 +12,18 @@ const logger = require('./logger').logger; // Import the logger module
 // Connect to the Docker daemon (default socket path)
 const docker = new Docker();
 
+async function createIsolatedNetwork() {
+  return await docker.createNetwork({
+    Name: 'no-internet-network',
+    Driver: 'bridge',
+    Internal: true // key: prevents external access
+  });
+}
+
+createIsolatedNetwork()
+  .then(net => console.log('Created network', net.id))
+  .catch(console.error);
+
 async function createTarFile(executionEntry) {
   try {
     logger.info(`Creating tar file for execution entry: ${executionEntry._id}`);
@@ -79,6 +91,7 @@ async function createAndStartContainer(executionEntry) {
           Cmd: ['/bin/bash', '-c', "mkdir assignment && cp ./scripts/" + executionEntry.zipFilePath.replaceAll(path.sep, '.') + ".script.sh ./assignment/ && cd assignment && chmod +x ./" + executionEntry.zipFilePath.replaceAll(path.sep, '.') + ".script.sh " + " && ./" + executionEntry.zipFilePath.replaceAll(path.sep, '.') + ".script.sh"], // Command to execute inside the container
           name: createContainerName(executionEntry),
           HostConfig: {
+          NetworkMode: 'no-internet-network',
            Memory: 5.12e+8, // 512MB in bytes
            //AutoRemove: true, // Automatically remove the container when it exits
            StorageOpt: {

@@ -85,11 +85,6 @@ const httpLogger = pinoHttp({
   }
 });
 
-logger.debug("test debug");
-logger.info("test info");
-logger.error("test error");
-logger.trace("test trace");
-
 
 //This one works but only for console
 /*
