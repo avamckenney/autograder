@@ -52,7 +52,10 @@ async function main() {
           "authSource": config.mongoDatabase
         },
         "user": config.mongoAuth.user,
-        "pass": config.mongoAuth.password
+        "pass": config.mongoAuth.password,
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useCreateIndex: true
       }
     );
   } else {
