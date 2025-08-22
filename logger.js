@@ -58,22 +58,22 @@ const resSerializer = (res) => {
 const logger = pino(
   {
     level: 'debug',
-    serializers: {
+    /*serializers: {
       ...pino.stdSerializers,
       req: reqSerializer,
       res: resSerializer
     }
-  },
+  },*/
   transport
 );
 
 const httpLogger = pinoHttp({
   logger,
-  serializers: {
+  /*serializers: {
     ...pino.stdSerializers,
     req: reqSerializer,
     res: resSerializer
-  }
+  }*/
 });
 
 logger.debug("test debug");
