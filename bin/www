@@ -45,7 +45,7 @@ async function main() {
     console.log('Running in production mode');
     //console.log(`mongodb://${config.mongoAuth.user}:********@${config.mongoAddress}/${config.mongoDatabase}`);
     //await mongoose.connect(`mongodb://${config.mongoAuth.user}:${config.mongoAuth.password}@${config.mongoAddress}/${config.mongoDatabase}`);
-    await mongoose.connect("mongodb://mongouser:dxf6bMm4KtJ3@localhost:27017/autograderwebapp")
+    await mongoose.connect("mongodb://mongouser:dxf6bMm4KtJ3@127.0.0.1:27017/autograderwebapp")
     /*await mongoose.connect(`mongodb://${config.mongoAddress}/${config.mongoDatabase}`,
         {
         "user": config.mongoAuth.user,
@@ -57,7 +57,7 @@ async function main() {
     // Development-specific configurations (e.g., optimized logging, different database)
     //console.log(`mongodb://${config.mongoAuth.user}:********@${config.mongoAddress}/${config.mongoDatabase}`);
     console.log('Running in development mode');
-    await mongoose.connect("mongodb://mongouser:dxf6bMm4KtJ3@localhost:27017/autograderwebapp")
+    await mongoose.connect("mongodb://mongouser:dxf6bMm4KtJ3@127.0.0.1:27017/autograderwebapp")
     //await mongoose.connect(`mongodb://${config.mongoAuth.user}:${config.mongoAuth.password}@${config.mongoAddress}/${config.mongoDatabase}`);
     /*await mongoose.connect(`mongodb://${config.mongoAddress}/${config.mongoDatabase}`,
         {
