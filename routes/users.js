@@ -2,7 +2,7 @@ const express = require('express');
 const assignmentRouter = require('./assignments');
 const router = express.Router();
 const EXECUTION_VIEW_LIMIT = 25;
-const logger = require('../logger');
+const logger = require('../logger').logger; // Import the logger module
 
 const mongoose = require('mongoose');
 const executionModel = mongoose.model('Execution', require('../model/ExecutionModel'));

@@ -6,7 +6,7 @@ const path = require('path');
 const FEEDBACK_OUTPUT_DIR = "feedback/"; //TODO: move to config file?
 const SAVE_LOGS = true;
 const LOGS_OUTPUT_DIR = "logs/"; //TODO: move to config file?
-const logger = require('./logger'); // Import the logger module
+const logger = require('./logger').logger; // Import the logger module
 
 
 // Connect to the Docker daemon (default socket path)

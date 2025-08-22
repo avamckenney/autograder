@@ -4,8 +4,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var morgan = require('morgan');
 const authCheck = require("./middleware/checkauth");
-const logger = require('./logger'); // Import the logger module
-const pinoHTTP = require('pino-http');
+const logger = require('./logger').logger; // Import the logger module
+const httpLogger = require('./logger').httpLogger; // Import the logger module
 const assignmentExecutor = require('./assignmentexecutor'); // Import the assignment executor module
 const config = require("./config.json");
 
@@ -22,10 +22,10 @@ var app = express();
 
 //logger
 app.use(
-  pinoHTTP({
-    logger,
-  })
+  httpLogger
 );
+
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -117,7 +117,7 @@ app.use("/", function(req, res, next) {
   logger.info("Request method: " + req.method);
   logger.info("Request path: " + req.path);
   logger.info("Request user: " + (req.user ? req.user.username : "Not authenticated"));
-  logger.debug("DEBUG!");
+
   next()
 });
 

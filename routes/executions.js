@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const fsPromises = fs.promises;
 const mongoose = require('mongoose');
-const logger = require('../logger');
+const logger = require('../logger').logger;
 const executionModel = mongoose.model('Execution', require('../model/ExecutionModel'));
 
 router.param('execId', async (req, res, next, execId) => {

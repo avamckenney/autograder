@@ -1,6 +1,6 @@
 const pino = require('pino');
 const path = require('path');
-
+const pinoHTTP = require('pino-http');
 const DEFAULT_LOG_LEVEL = 'debug'; // Default log level
 
 
@@ -37,12 +37,44 @@ const transport = pino.transport({
     }
   ]
 });
+
+// ---- Custom serializers ----
+const reqSerializer = (req) => {
+  const s = pino.stdSerializers.req(req);
+  if (s && s.headers) {
+    delete s.headers.cookie;
+  }
+  return s;
+};
+
+const resSerializer = (res) => {
+  const s = pino.stdSerializers.res(res);
+  if (s && s.headers) {
+    delete s.headers['set-cookie'];
+  }
+  return s;
+};
+
 const logger = pino(
   {
-    level: 'debug' // 👈 this ensures debug logs are emitted
+    level: 'debug',
+    serializers: {
+      ...pino.stdSerializers,
+      req: reqSerializer,
+      res: resSerializer
+    }
   },
   transport
 );
+
+const httpLogger = pinoHttp({
+  logger,
+  serializers: {
+    ...pino.stdSerializers,
+    req: reqSerializer,
+    res: resSerializer
+  }
+});
 
 logger.debug("test debug");
 logger.info("test info");
@@ -67,4 +99,4 @@ logger.trace("test trace");
 
 */
 
-module.exports = logger;
+module.exports = {logger, httpLogger};
