@@ -75,7 +75,7 @@ app.get("/login", (req, res) => {
   res.render("login");
 });
 
-app.post('/login', passport.authenticate('local', {failureRedirect: + '/login.html'}), function(req, res) {
+app.post('/login', passport.authenticate('local', {failureRedirect: '/login.html'}), function(req, res) {
   // Successful authentication, redirect home.
   logger.info("User logged in successfully:", req.user);
   if(req.user){
