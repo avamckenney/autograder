@@ -3,19 +3,19 @@ const path = require('path');
 
 const DEFAULT_LOG_LEVEL = 'debug'; // Default log level
 
-
-const logger = pino(
-    {
-        level: DEFAULT_LOG_LEVEL,
+const logger = pino({
+    mixin(_context, level) {
+        return { 'level-label': logger.levels.labels[level] }
     },
-    pino.transport({
+    transports: {
         targets: [
             {
                 target: 'pino-pretty',
+                level: DEFAULT_LOG_LEVEL,
                 options: {
                     colorize: true,
                     translateTime: 'SYS:standard',
-                    ignore: 'pid,hostname',
+                    ignore: 'pid,hostname,level-label',
                     levelFirst: true,
                     singleLine: true,
                     messageFormat: '{msg}',
@@ -23,6 +23,7 @@ const logger = pino(
             },
             {
                 target: 'pino/file',
+                level: DEFAULT_LOG_LEVEL,
                 options: {
                     destination: path.join(__dirname, `app.log`),
                     mkdir: true,
@@ -32,13 +33,15 @@ const logger = pino(
             {
                 target: '@logtail/pino',
                 options: { 
+                    level: DEFAULT_LOG_LEVEL,
                     sourceToken: 'nC9ECehHxhoWLH5KTUaiZmaA',
                     options: { endpoint: 'https://s1448634.eu-nbg-2.betterstackdata.com' }
                 },
             }
         ]
-    })
-);
+    },
+    timestamp: pino.stdTimeFunctions.isoTime
+});
 
 //This one works but only for console
 /*
