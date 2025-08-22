@@ -117,6 +117,7 @@ app.use("/", function(req, res, next) {
   logger.info("Request method: " + req.method);
   logger.info("Request path: " + req.path);
   logger.info("Request user: " + (req.user ? req.user.username : "Not authenticated"));
+  logger.debug("DEBUG!");
   next()
 });
 
