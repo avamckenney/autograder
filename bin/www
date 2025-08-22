@@ -38,6 +38,13 @@ var server = https.createServer({
 
 main().catch(err => console.log(err));
 
+mongoose.connection.on('error', function (err) {
+ // Do something
+ logger.error("Error conneciton to mongoose: " + err);
+});
+
+mongoose.connection.on('connected', () => logger.info('connected to mongoose'));
+
 async function main() {
   //Connect to Mongoose/MongoDB
   if (process.env.NODE_ENV === 'production') {
