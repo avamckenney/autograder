@@ -147,6 +147,8 @@ async function createAndStartContainer(executionEntry) {
             }else if(logs.includes("timeout: timeout: sending signal TERM to command")){
               logger.debug("Container execution failed due to timeout: " + executionEntry._id);
               executionEntry.feedback = "Execution failed due to timeout. Your solution took too long to execute.";
+            }else{
+              logger.debug("Did not find disk usage or timeout errors in logs.");
             }
           }else{
             logger.debug("No logs found for execution entry: " + executionEntry._id);
