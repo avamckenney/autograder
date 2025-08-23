@@ -134,6 +134,8 @@ async function createAndStartContainer(executionEntry) {
           if(!logs){
             logger.debug("Reading logs for execution entry: " + executionEntry._id);
             logs = await container.logs({stdout: true, stderr: true});
+          }else{
+            logger.debug("Logs already read for execution entry: " + executionEntry._id);
           }
 
           if(logs){
@@ -148,7 +150,9 @@ async function createAndStartContainer(executionEntry) {
             logger.debug("No logs found for execution entry: " + executionEntry._id);
           }
 
+          logger.log("Saving execution entry: " + executionEntry._id);
           await executionEntry.save();
+          logger.log("Execution entry saved: " + executionEntry._id);
           return;
         }
         
