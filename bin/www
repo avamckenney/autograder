@@ -56,7 +56,8 @@ async function main() {
   } else {
     // Development-specific configurations (e.g., optimized logging, different database)
     console.log('Running in development mode');
-    await mongoose.connect("mongodb://mongouser:dxf6bMm4KtJ3@127.0.0.1:27017/autograderwebapp")
+    await mongoose.connect(`mongodb://${config.mongoAuth.user}:${config.mongoAuth.password}@${config.mongoAddress}/${config.mongoDatabase}`);
+  
   }
 
   
