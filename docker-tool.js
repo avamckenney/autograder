@@ -138,6 +138,8 @@ async function createAndStartContainer(executionEntry) {
             logger.debug("Logs already read for execution entry: " + executionEntry._id);
           }
 
+          logs = logs.toString('utf8');
+
           if(logs){
             if(logs.contains("disk: No space left on device")){
               logger.debug("Container execution failed due to insufficient disk space: " + executionEntry._id);
