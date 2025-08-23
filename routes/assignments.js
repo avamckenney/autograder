@@ -369,11 +369,16 @@ router.post('/:assignment/grades', authCheck.checkRolePermission("admin"), assig
         
         let submissions = await executionModel.find({ assignment: req.assignmentDoc._id, createdAt: { $lte: cutoffDate }, status: "completed"})
             .select("studentName feedbackPath createdAt grade zipFilePath").sort({ createdAt: -1 }).exec();
-        
+        let studentSubmissionCounts = {};
         let penalties = {};
         if(req.assignmentDoc.extraSubmissionsPenaltyUnit !== "none" && req.assignmentDoc.freeSubmissions > 0){
             for(let submission of submissions){
-                let numSubmissions = await executionModel.countDocuments({ assignment: req.assignmentDoc._id, studentName: submission.studentName, status: "completed" }).exec()
+                let numSubmissions = studentSubmissionCounts[submission.studentName];
+                if(!numSubmissions && numSubmissions !== 0){
+                    let numSubmissions = await executionModel.countDocuments({ assignment: req.assignmentDoc._id, studentName: submission.studentName, status: "completed" }).exec()
+                    studentSubmissionCounts[submission.studentName] = numSubmissions;
+                }
+
                 if(numSubmissions > req.assignmentDoc.freeSubmissions){
                     let extraSubmissions = numSubmissions - req.assignmentDoc.freeSubmissions;
                     if(req.assignmentDoc.extraSubmissionsPenaltyUnit === "percent"){
@@ -426,7 +431,7 @@ router.post('/:assignment/grades', authCheck.checkRolePermission("admin"), assig
         }
 
 
-        sendGradeData(req, res, grades);
+        sendGradeData(req, res, grades, studentSubmissionCounts);
     }catch (error) {
         logger.error("Error update assignment:", error);
         if (error.code === 11000) { // Duplicate key error
@@ -440,7 +445,7 @@ router.post('/:assignment/grades', authCheck.checkRolePermission("admin"), assig
 });
 
 
-async function sendGradeData(req, res, grades) {
+async function sendGradeData(req, res, grades, studentSubmissionCounts) {
     let includeData = req.body.includeData;
     let includeGrades = true;
     let includeFeedback = false;
@@ -506,12 +511,19 @@ async function sendGradeData(req, res, grades) {
     const csvStream = await csvFile.createWriteStream({ encoding: 'utf8' });
     
     if(includeData === "csv"){
-        await csvStream.write("Username,Grade,Submission Date\n"); 
+        await csvStream.write("Username,Grade,Submission Date"); 
     }else if(includeData === "feedback"){
-        await csvStream.write("Username,Grade,Submission Date,Feedback Path\n"); 
+        await csvStream.write("Username,Grade,Submission Date,Feedback Path"); 
     }else{
-        await csvStream.write("Username,Grade,Submission Date,Feedback Path,Submission Path\n"); 
+        await csvStream.write("Username,Grade,Submission Date,Feedback Path,Submission Path"); 
     }
+
+
+    if(Object.keys(studentSubmissionCounts).length > 0){
+        await csvStream.write(",Submission Count");
+    }
+
+    await csvStream.write("\n");
 
     //update entries in csv to have new names, remove submission column if not being included
     for(let grade in grades){
@@ -522,12 +534,18 @@ async function sendGradeData(req, res, grades) {
         let feedbackFilePath = path.join(feedbackOutputDirName, grade + "-feedback.txt");
 
         if(includeData === "csv"){
-            await csvStream.write(`${grade},${grades[grade].grade},${grades[grade].createdAt.toISOString()}\n`);
+            await csvStream.write(`${grade},${grades[grade].grade},${grades[grade].createdAt.toISOString()}`);
         }else if(includeData === "feedback"){
-            await csvStream.write(`${grade},${grades[grade].grade},${grades[grade].createdAt.toISOString()},${feedbackFilePath}\n`);
+            await csvStream.write(`${grade},${grades[grade].grade},${grades[grade].createdAt.toISOString()},${feedbackFilePath}`);
         }else{
-            await csvStream.write(`${grade},${grades[grade].grade},${grades[grade].createdAt.toISOString()},${feedbackFilePath},${submissionFilePath}\n`);
+            await csvStream.write(`${grade},${grades[grade].grade},${grades[grade].createdAt.toISOString()},${feedbackFilePath},${submissionFilePath}`);
         }
+
+        if(Object.keys(studentSubmissionCounts).length > 0){
+            await csvStream.write(`,${studentSubmissionCounts[grade] || 0}`);
+        }
+        await csvStream.write("\n");
+
 
         if(includeFeedback){
             if(feedbackPath && feedbackPath !== "No feedback provided"){
