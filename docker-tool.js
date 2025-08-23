@@ -124,7 +124,7 @@ async function createAndStartContainer(executionEntry) {
         }   
 
         if(data.StatusCode !== 0){
-          
+          logger.debug("Container execution failed: " + executionEntry._id);
           executionEntry.status = "failed";
           executionEntry.finishedAt = Date.now();
           executionEntry.executionTime = (executionEntry.finishedAt - executionEntry.createdAt) / 1000;
@@ -132,15 +132,20 @@ async function createAndStartContainer(executionEntry) {
           executionEntry.feedbackPath = "";
 
           if(!logs){
+            logger.debug("Reading logs for execution entry: " + executionEntry._id);
             logs = await container.logs({stdout: true, stderr: true});
           }
 
           if(logs){
             if(logs.contains("disk: No space left on device")){
+              logger.debug("Container execution failed due to insufficient disk space: " + executionEntry._id);
               executionEntry.feedback = "Execution failed due to insufficient disk space. Your solution likely consumed too much disk space.";
             }else if(logs.contains("timeout: timeout: sending signal TERM to command")){
+              logger.debug("Container execution failed due to timeout: " + executionEntry._id);
               executionEntry.feedback = "Execution failed due to timeout. Your solution took too long to execute.";
             }
+          }else{
+            logger.debug("No logs found for execution entry: " + executionEntry._id);
           }
 
           await executionEntry.save();
