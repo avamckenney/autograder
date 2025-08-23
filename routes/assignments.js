@@ -513,11 +513,11 @@ async function sendGradeData(req, res, grades) {
     const csvStream = await csvFile.createWriteStream({ encoding: 'utf8' });
     
     if(includeData === "csv"){
-        await csvStream.write("Username,Grade,Submission Date,Submission Count\n"); 
+        await csvStream.write("Username,Grade,Submission Count,Submission Date\n"); 
     }else if(includeData === "feedback"){
-        await csvStream.write("Username,Grade,Submission Date,Feedback Path,Submission Count\n"); 
+        await csvStream.write("Username,Grade,Submission Count,Submission Date,Feedback Path\n"); 
     }else{
-        await csvStream.write("Username,Grade,Submission Date,Feedback Path,Submission Path,Submission Count\n"); 
+        await csvStream.write("Username,Grade,Submission Count,Submission Date,Feedback Path,Submission Path\n"); 
     }
 
     //update entries in csv to have new names, remove submission column if not being included
@@ -529,11 +529,11 @@ async function sendGradeData(req, res, grades) {
         let feedbackFilePath = path.join(feedbackOutputDirName, grade + "-feedback.txt");
 
         if(includeData === "csv"){
-            await csvStream.write(`${grade},${grades[grade].grade},${grades[grade].createdAt.toISOString()},${grades[grade].numSubmissions || 0}\n`);
+            await csvStream.write(`${grade},${grades[grade].grade},${grades[grade].numSubmissions || 0},${grades[grade].createdAt.toISOString()}\n`);
         }else if(includeData === "feedback"){
-            await csvStream.write(`${grade},${grades[grade].grade},${grades[grade].createdAt.toISOString()},${feedbackFilePath},${grades[grade].numSubmissions || 0}\n`);
+            await csvStream.write(`${grade},${grades[grade].grade},${grades[grade].numSubmissions || 0},${grades[grade].createdAt.toISOString()},${feedbackFilePath}\n`);
         }else{
-            await csvStream.write(`${grade},${grades[grade].grade},${grades[grade].createdAt.toISOString()},${feedbackFilePath},${submissionFilePath},${grades[grade].numSubmissions || 0}\n`);
+            await csvStream.write(`${grade},${grades[grade].grade},${grades[grade].numSubmissions || 0},${grades[grade].createdAt.toISOString()},${feedbackFilePath},${submissionFilePath}\n`);
         }
 
         if(includeFeedback){
