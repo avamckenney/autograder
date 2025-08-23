@@ -114,20 +114,35 @@ async function createAndStartContainer(executionEntry) {
         
         let data = await container.wait();
 
+        let logs = null;
         if(SAVE_LOGS){
           console.log("Saving logs for execution entry: " + executionEntry._id);
-          const logs = await container.logs({stdout: true, stderr: true});
+          logs = await container.logs({stdout: true, stderr: true});
           console.log("Logs for execution entry: " + executionEntry._id);
           let logFilePath = path.join(LOGS_OUTPUT_DIR, 'logs-' + executionEntry._id + '.txt');
           await fsPromises.writeFile(logFilePath, logs.toString('utf8'));
         }   
 
         if(data.StatusCode !== 0){
+          
           executionEntry.status = "failed";
           executionEntry.finishedAt = Date.now();
           executionEntry.executionTime = (executionEntry.finishedAt - executionEntry.createdAt) / 1000;
           executionEntry.feedback = "Execution failed. Contact the creator of the assignment for more information.";
           executionEntry.feedbackPath = "";
+
+          if(!logs){
+            logs = await container.logs({stdout: true, stderr: true});
+          }
+
+          if(logs){
+            if(logs.contains("disk: No space left on device")){
+              executionEntry.feedback = "Execution failed due to insufficient disk space. Your solution likely consumed too much disk space.";
+            }else if(logs.contains("timeout: timeout: sending signal TERM to command")){
+              executionEntry.feedback = "Execution failed due to timeout. Your solution took too long to execute.";
+            }
+          }
+
           await executionEntry.save();
           return;
         }
