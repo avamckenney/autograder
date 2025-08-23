@@ -91,10 +91,9 @@ async function createAndStartContainer(executionEntry) {
           Cmd: ['/bin/bash', '-c', "mkdir assignment && cp ./scripts/" + executionEntry.zipFilePath.replaceAll(path.sep, '.') + ".script.sh ./assignment/ && cd assignment && chmod +x ./" + executionEntry.zipFilePath.replaceAll(path.sep, '.') + ".script.sh " + " && ./" + executionEntry.zipFilePath.replaceAll(path.sep, '.') + ".script.sh"], // Command to execute inside the container
           name: createContainerName(executionEntry),
           HostConfig: {
-          NetworkMode: 'no-internet-network',
-           Memory: 5.12e+8, // 512MB in bytes
-           //AutoRemove: true, // Automatically remove the container when it exits
-           StorageOpt: {
+            NetworkMode: 'no-internet-network',
+            Memory: 1.28e+8, // 128MB in bytes
+            StorageOpt: {
              "size": "100M" // Set the size of the container's filesystem
             }
           }
