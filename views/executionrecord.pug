@@ -70,7 +70,8 @@ html
                 else if execution.status == 'pending'
                     pre(id="execution-feedback") Execution is still pending. Please wait for the evaluation to complete.
                 else if execution.status == 'failed'
-                    pre(id="execution-feedback") Execution failed.
+                    pre(id="execution-feedback")
+                        | #{execution.feedback}
                 else if execution.status == 'cancelled'
                     pre(id="execution-feedback") Execution was cancelled.
                 else
