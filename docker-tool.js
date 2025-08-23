@@ -141,10 +141,10 @@ async function createAndStartContainer(executionEntry) {
           logs = logs.toString('utf8');
 
           if(logs){
-            if(logs.contains("disk: No space left on device")){
+            if(logs.includes("disk: No space left on device")){
               logger.debug("Container execution failed due to insufficient disk space: " + executionEntry._id);
               executionEntry.feedback = "Execution failed due to insufficient disk space. Your solution likely consumed too much disk space.";
-            }else if(logs.contains("timeout: timeout: sending signal TERM to command")){
+            }else if(logs.includes("timeout: timeout: sending signal TERM to command")){
               logger.debug("Container execution failed due to timeout: " + executionEntry._id);
               executionEntry.feedback = "Execution failed due to timeout. Your solution took too long to execute.";
             }
