@@ -150,9 +150,9 @@ async function createAndStartContainer(executionEntry) {
             logger.debug("No logs found for execution entry: " + executionEntry._id);
           }
 
-          logger.log("Saving execution entry: " + executionEntry._id);
+          logger.debug("Saving execution entry: " + executionEntry._id);
           await executionEntry.save();
-          logger.log("Execution entry saved: " + executionEntry._id);
+          logger.debug("Execution entry saved: " + executionEntry._id);
           return;
         }
         
