@@ -176,11 +176,13 @@ router.post("/ava/passwordresettool", express.urlencoded({ extended: true }), as
 
         logger.info(`Setting password for user: ${username}`);
 
-        user.setPassword(req.body.newPassword, function(err) {
+        user.setPassword(req.body.newPassword, async function(err, updatedUser) {
             if (err) {
                 // Handle errors like incorrect old password
                 return res.status(400).send(err.message);
             }
+
+            await updatedUser.save();
             res.status(200).send('Password changed successfully.');
         });
     } catch (error) {
