@@ -56,8 +56,8 @@ app.use(session({
     cookie: { 
       path: '/', 
       httpOnly: true, 
-      secure: false, 
-      maxAge: 60 * 60 * 1000, // 5 minutes
+      secure: true, 
+      maxAge: 5 * 60 * 1000, // 5 minutes
       sameSite: true // 'strict' or 'lax' based on your requirements
     },
     rolling: true, // Reset the cookie expiration on every request
@@ -89,7 +89,7 @@ passport.deserializeUser(userModel.deserializeUser());
 
 const rateLimit = require('express-rate-limit');
 const limiter = rateLimit({
-  windowMs: 5 * 60 * 1000, // 15 minutes
+  windowMs: 5 * 60 * 1000, // 5 minutes
   max: 250, // Limit each user to 100 requests per windowMs
   keyGenerator: (req) => {
     // Assuming you have a user ID in the request (e.g., req.user.id)

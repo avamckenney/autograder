@@ -25,14 +25,14 @@ def runProcess(cmdList, timeoutArgument=10):
     except subprocess.CalledProcessError as e:
         if result != None:
             return {"result": "exception", "stdout": result.stdout.strip(), "stderr": result.stderr}
-        return {"result": "exception", "stdout": "", "stderr": e.stderr.strip() if e.stderr else ""}
+        return {"result": "exception", "stdout": "", "stderr": e.stderr.strip() if e.stderr else str(e)}
         
 #all or nothing comparison of stdout and expected output
 def evalEqualOutput(result, expected, totalGrade):
     output = {"maxgrade": totalGrade, "expected": expected, "output": result["stdout"], "error": result["stderr"], "grade": 0, "feedback": ""}
 
     if result.get("result") == "exception":
-        output["feedback"] = "Did not run successfully."
+        output["feedback"] = "Did not run successfully. Error: " + output["error"]
     elif result.get("result") == "timeout":
         output["feedback"] = "Timed out while running."
     elif result.get("result") == "success" and result.get("stdout") == expected:
