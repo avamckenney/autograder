@@ -93,6 +93,11 @@ router.post('/:username/password', async function (req, res) {
             return res.status(400).send('Current password and new password cannot be the same.');
         }
 
+        if(req.body.newPassword.length < 8) {
+            logger.warn("New password is too short.");
+            return res.status(400).send('New password must be at least 8 characters long.');
+        }
+
         let user = await userModel.findOne({username: req.params.username});
         if (!user) {
             logger.warn("User not found:", req.params.username);

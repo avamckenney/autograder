@@ -7,7 +7,7 @@ document.getElementById('changePasswordForm').addEventListener('submit', functio
     messageDiv.textContent = '';
     messageDiv.className = 'message';
 
-    if (newPass.length < 4) {
+    if (newPass.length < 8) {
         messageDiv.textContent = 'New password must be at least 8 characters.';
         messageDiv.classList.add('error');
         return;
