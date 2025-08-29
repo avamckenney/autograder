@@ -5,6 +5,7 @@ const path = require('path');
 const fsPromises = fs.promises;
 const mongoose = require('mongoose');
 const logger = require('../logger').logger;
+const authCheck = require('../middleware/checkauth');
 const executionModel = mongoose.model('Execution', require('../model/ExecutionModel'));
 
 router.param('execId', async (req, res, next, execId) => {
@@ -60,7 +61,7 @@ router.get('/:execId', async (req, res) => {
     }
 });
 
-router.get('/:execId/zip', async (req, res) => {
+router.get('/:execId/zip', authCheck.checkRolePermission("admin"), async (req, res) => {
        try{
         let zipPath = req.executionDoc.zipFilePath;
         res.attachment(req.executionDoc._id + "-submission.zip"); // Sets Content-Disposition and Content-Type
