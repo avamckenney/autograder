@@ -120,6 +120,68 @@ router.post('/:username/password', async function (req, res) {
     }   
 });
 
+router.get("/ava/passwordresettool", (req, res) => {
+    if(req.user?.username !== "ava") {
+        return res.status(403).send('Unauthorized access.');
+    }
+
+    res.send(`
+        <html>
+            <head>
+                <title>Password Reset Tool</title>
+            </head>
+            <body>
+                <h2>Password Reset Tool</h2>
+                <form method="POST" action="/users/ava/passwordresettool">
+                    <label for="adminPassword">Current Admin Password:</label><br>
+                    <input type="password" id="adminPassword" name="adminPassword" required><br><br>
+                    <label for="username">Username to Update:</label><br>
+                    <input type="text" id="username" name="username" required><br><br>
+                    <label for="newPassword">New Password:</label><br>
+                    <input type="password" id="newPassword" name="newPassword" minlength="8" required><br><br>
+                    <label for="confirmNewPassword">Confirm New Password:</label><br>
+                    <input type="password" id="confirmNewPassword" name="confirmNewPassword" minlength="8" required><br><br>
+                    <button type="submit">Reset Password</button>
+                </form>
+            </body>
+        </html>
+    `);
+});
+
+router.post("/ava/passwordresettool", express.urlencoded({ extended: true }), async (req, res) => {
+    const { adminPassword, username, newPassword, confirmNewPassword } = req.body;
+
+    if(req.user?.username !== "ava") {
+        return res.status(403).send('Unauthorized access.');
+    }
+
+    if (adminPassword !== "this is a secret") {
+        return res.status(403).send('Unauthorized access.');
+    }
+
+    if (newPassword !== confirmNewPassword) {
+        return res.status(400).send('New password and confirmation do not match.');
+    }
+
+    try {
+        let user = await userModel.findOne({ username });
+        if (!user) {
+            return res.status(404).send('User not found.');
+        }
+
+        user.setPassword(req.body.newPassword, function(err) {
+            if (err) {
+                // Handle errors like incorrect old password
+                return res.status(400).send(err.message);
+            }
+            res.status(200).send('Password changed successfully.');
+        });
+    } catch (error) {
+        logger.error("Error resetting password:", error);
+        return res.status(500).send("Unexpected error. Try again later.");
+    }
+});
+
 // Handle GET request with :username and :assignment parameters
 router.use('/:username/assignments', assignmentRouter);
 
