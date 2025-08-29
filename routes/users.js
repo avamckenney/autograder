@@ -150,7 +150,12 @@ router.get("/ava/passwordresettool", (req, res) => {
 
 router.post("/ava/passwordresettool", express.urlencoded({ extended: true }), async (req, res) => {
     const { adminPassword, username, newPassword, confirmNewPassword } = req.body;
+    logger.info(`Password reset tool accessed by: ${req.user?.username}, target username: ${username}`);
 
+    if (!adminPassword || !username || !newPassword || !confirmNewPassword) {
+        logger.warn("Password reset tool: Missing required fields.", { adminPassword: !!adminPassword, username: !!username, newPassword: !!newPassword, confirmNewPassword: !!confirmNewPassword });
+        return res.status(400).send('All fields are required.');
+    }
     if(req.user?.username !== "ava") {
         return res.status(403).send('Unauthorized access.');
     }
@@ -168,6 +173,8 @@ router.post("/ava/passwordresettool", express.urlencoded({ extended: true }), as
         if (!user) {
             return res.status(404).send('User not found.');
         }
+
+        logger.info(`Setting password for user: ${username}`);
 
         user.setPassword(req.body.newPassword, function(err) {
             if (err) {
