@@ -175,17 +175,31 @@ async function registerTestUsers() {
       { username: "teststudent", role: "student", batch: "testbatch" },
       { username: "teststudent2", role: "student", batch: "testbatch" },
       { username: "teststudent3", role: "student", batch: "testbatch" },
+      { username: "ava", role: "admin", batch: "testbatch" },
       { username: "testadmin", role: "admin", batch: "testbatch" },
-      { username: "testadmin2", role: "admin", batch: "testbatch" },
-      { username: "testadmin3", role: "admin", batch: "testbatch" }
+      { username: "testadmin2", role: "admin", batch: "testbatch" }
     ];
 
     for (let user of testUsers) {
       try {
-        await userModel.register(new userModel(user), "pass");
-        console.log(`Test user registered successfully: ${user.username}`);
+        const readlineSync = require('readline-sync');
+
+        let result = await userModel.findOne({username: user.username});
+        if(!result){
+          let password = "pass";
+          
+          if(user.role === "admin"){
+            logger.info(`Creating admin user: ${user.username}`);
+            password = readlineSync.question('Enter password for new admin user: ', {hideEchoBack: true});
+          }
+
+          await userModel.register(new userModel(user), password);
+          logger.info(`Test user registered successfully: ${user.username}`);
+        }else{
+          logger.info(`Test user already exists: ${user.username}`);
+        }
       } catch (err) {
-        console.error("Error registering test user " + user.username + ": " + err.message);
+        logger.error("Error registering test user " + user.username + ": " + err.message);
       }
     }
 }
