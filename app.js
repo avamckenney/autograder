@@ -144,7 +144,7 @@ app.use("/", function(req, res, next) {
     //console.log("User is not authenticated, redirecting to login");
     logger.warn("User is not authenticated, redirecting to login");
     
-    if(!req.session.returnTo && req.path.startsWith("/users/")) {
+    if(!req.session.returnTo && (req.path.startsWith("/users/") || req.path.startsWith("/executions/") || req.path === "/statistics")) {
       req.session.returnTo = req.protocol + '://' + req.host + req.url; // Store the original URL in the session
       logger.info("Setting return to for session: " + req.session.returnTo);
     }
