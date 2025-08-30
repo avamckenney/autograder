@@ -81,10 +81,12 @@ app.post('/login', passport.authenticate('local', {failureRedirect: '/login.html
   logger.info("User logged in successfully:", req.user);
   if(req.user){
     if(req.session.returnTo) {
+      logger.info("Redirecting to original URL:", req.session.returnTo);
       const redirectUrl = req.session.returnTo;
       delete req.session.returnTo; // Clear the returnTo after use
       return res.redirect(redirectUrl);
     }
+    logger.info("No original URL, redirecting to user home page");
     return res.redirect('/users/' + req.user.username); // Redirect to home page after successful login
   }
   logger.error("User login failed, redirecting to login page");
@@ -112,8 +114,11 @@ app.use(limiter);
 app.use("/", function(req, res, next) {
   if(!req.isAuthenticated() && !req.path.startsWith("/login.html?") && !req.path.startsWith("/login?")) {
     //console.log("User is not authenticated, redirecting to login");
-    req.session.returnTo = req.originalUrl; // Store the original URL in the session
     logger.warn("User is not authenticated, redirecting to login");
+    logger.info("Original URL stored in session:", req.originalUrl);
+    req.session.returnTo = req.originalUrl; // Store the original URL in the session
+    
+    
     return res.redirect("/login.html");
   }
   next();
