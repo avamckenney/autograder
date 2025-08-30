@@ -76,10 +76,38 @@ app.get("/login", (req, res) => {
   res.render("login");
 });
 
-app.post('/login', passport.authenticate('local', {failureRedirect: '/login.html'}), function(req, res) {
+app.post('/login', function(req, res, next){
+  const redirectUrl = req.session.returnTo; 
+  passport.authenticate('local', (err, user, info) => {
+    if (err){
+      logger.error("User authentication failed, redirecting to login page");
+      return res.redirect("/login.html");
+    }   
+    if (!user){
+      logger.warn("No user object after login, redirecting to login");
+      return res.redirect('/login');
+    }
+
+    req.logIn(user, (err) => {
+      if (err){
+        logger.error("User login failed, redirecting to login page");
+        return res.redirect("/login.html");
+      }
+      
+      const url = redirectUrl || '/users/' + req.user.username;
+      logger.info("User logged in successfully:", req.user.username);
+      logger.info("Redirecting to:", url);
+      delete req.session.returnTo; // clean up
+      return res.redirect(url);
+    });
+  })(req, res, next);
+  
+  /*passport.authenticate('local', {failureRedirect: '/login.html'}),  {
   // Successful authentication, redirect home.
   logger.info("User logged in successfully:", req.user);
   if(req.user){
+    console.log("initial session:")
+    console.log(req.session);
     if(req.session.returnTo) {
       logger.info("Redirecting to original URL:", req.session.returnTo);
       const redirectUrl = req.session.returnTo;
@@ -90,7 +118,7 @@ app.post('/login', passport.authenticate('local', {failureRedirect: '/login.html
     return res.redirect('/users/' + req.user.username); // Redirect to home page after successful login
   }
   logger.error("User login failed, redirecting to login page");
-  return res.redirect("/login.html");
+  return res.redirect("/login.html");*/
 });
 passport.serializeUser(userModel.serializeUser());
 passport.deserializeUser(userModel.deserializeUser());
@@ -112,12 +140,14 @@ app.use(limiter);
 
 
 app.use("/", function(req, res, next) {
-  if(!req.isAuthenticated() && !req.path.startsWith("/login.html?") && !req.path.startsWith("/login?")) {
+  if(!req.isAuthenticated() && !req.path.startsWith("/login.html") && !req.path.startsWith("/login")) {
     //console.log("User is not authenticated, redirecting to login");
     logger.warn("User is not authenticated, redirecting to login");
-    logger.info("Original URL stored in session:", req.originalUrl);
-    req.session.returnTo = req.originalUrl; // Store the original URL in the session
     
+    if(!req.session.returnTo && req.path !== "/login.html" && req.path !== "/login" && req.path !== "favicon.ico") {
+      req.session.returnTo = req.protocol + '://' + req.host + req.url; // Store the original URL in the session
+      logger.info("Setting return to for session: " + req.session.returnTo);
+    }
     
     return res.redirect("/login.html");
   }
