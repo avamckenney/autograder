@@ -301,25 +301,21 @@ app.get("/statistics", authCheck.checkRolePermission("admin"), async function(re
     let maxQueueCountReached = assignmentExecutor.getMaxQueueCountReached();
     let recentAverageExecutionTime = assignmentExecutor.getRecentAverageExecutionTime();
 
-    let loggedInUsers = [];
     logger.debug("Loading logged in users...")
-    if (req.sessionStore && req.sessionStore.sessions) {
-      const activeSessionIds = Object.keys(req.sessionStore.sessions);
-      const loggedInUserIds = [];
-
-      logger.debug("Active session IDs: " + activeSessionIds.join(", "));
-
-      for (const sessionId of activeSessionIds) {
-          const sessionData = JSON.parse(req.sessionStore.sessions[sessionId]);
-          if (sessionData && sessionData.passport && sessionData.passport.user) {
-              loggedInUserIds.push(sessionData.passport.user);
+    const Session = mongoose.connection.collection("sessions");
+    const now = new Date();
+    const sessions = await Session.find({expires: { $gt: now }}).toArray();
+    const userIds = [...new Set(
+      sessions.map(sess => {
+          try {
+            return JSON.parse(sess.session).passport?.user;
+          } catch (e) {
+            return null;
           }
-      }
-
-      // Find users based on the extracted IDs
-      loggedInUsers = await userModel.find({ _id: { $in: loggedInUserIds } });
-      logger.debug("Logged in users: " + loggedInUsers.map(u => u.username).join(", "));
-    }
+        })
+        .filter(Boolean)
+    )];
+    const loggedInUsers = await userModel.find({ _id: { $in: userIds } });
 
     let statistics = {
       usersCount,
