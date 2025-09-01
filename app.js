@@ -52,6 +52,7 @@ var sessionStore = new mongoDBSessionStore({
 
 app.use(function(req, res, next) {
   if (req.host && req.host !== "avamckenney.scs.carleton.ca") { // req.host may be undefined if the client did not send host header
+    logger.info("Denying request from host:", req.host);
     res.writeHead(404, {
       'Content-Type': 'text/plain'
     });
