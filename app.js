@@ -8,6 +8,7 @@ const logger = require('./logger').logger; // Import the logger module
 const httpLogger = require('./logger').httpLogger; // Import the logger module
 const assignmentExecutor = require('./assignmentexecutor'); // Import the assignment executor module
 const config = require("./config.json");
+const { MongoClient } = require("mongodb");
 
 const mongoose = require('mongoose');
 const userModel = mongoose.model('User', require('./model/UserModel'));
@@ -302,23 +303,26 @@ app.get("/statistics", authCheck.checkRolePermission("admin"), async function(re
     let recentAverageExecutionTime = assignmentExecutor.getRecentAverageExecutionTime();
 
     logger.debug("Loading logged in users...")
-    const Session = mongoose.connection.collection("sessions");
-    const now = new Date();
-    const sessions = await Session.find({expires: { $gt: now }}).toArray();
+
+    const client = await MongoClient.connect(`mongodb://${config.mongoAuth.user}:${config.mongoAuth.password}@${config.mongoAddress}/${config.sessionsDatabase}`);
+    const db = client.db();
+    logger.debug("Connected to MongoDB for session retrieval");
+    // Replace "mySessions" with the collection you configured in connect-mongodb-session
+    const sessions = await db.collection("sessions")
+      .find({ expires: { $gt: new Date() } })
+      .toArray();
     logger.debug("Active sessions found: " + sessions.length);
-    const userIds = [...new Set(
-      sessions.map(sess => {
-          try {
-            return JSON.parse(sess.session).passport?.user;
-          } catch (e) {
-            return null;
-          }
-        })
-        .filter(Boolean)
-    )];
+    const userIds = sessions
+      .map(sess => sess.session?.passport?.user)
+      .filter(Boolean);
     logger.debug("User IDs found: " + userIds);
-    const loggedInUsers = await userModel.find({ _id: { $in: userIds } });
+    const uniqueUserIds = [...new Set(userIds)];
+    logger.debug("Unique User IDs found: " + uniqueUserIds);
+    const loggedInUsers = await userModel.find({ _id: { $in: uniqueUserIds } });
     logger.debug("Logged in users found: " + loggedInUsers.length);
+    await client.close();
+  
+
     let statistics = {
       usersCount,
       assignmentsCount,
