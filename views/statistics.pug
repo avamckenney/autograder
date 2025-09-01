@@ -52,12 +52,7 @@ html
                 for user in statistics.loggedInUsers
                     .user-statistics
                         p
-                            | <strong>Username:</strong> #{user.username}
-                        p
-                            | <strong>Role:</strong> #{user.role}
-                        p
-                            | <strong>Batch:</strong> #{user.batch}
-                        br
+                            | <strong>Username:</strong> #{user.username} (role: #{user.role})
                         br
             else
                 p No users are currently logged in.
