@@ -305,6 +305,7 @@ app.get("/statistics", authCheck.checkRolePermission("admin"), async function(re
     const Session = mongoose.connection.collection("sessions");
     const now = new Date();
     const sessions = await Session.find({expires: { $gt: now }}).toArray();
+    logger.debug("Active sessions found: " + sessions.length);
     const userIds = [...new Set(
       sessions.map(sess => {
           try {
@@ -315,8 +316,9 @@ app.get("/statistics", authCheck.checkRolePermission("admin"), async function(re
         })
         .filter(Boolean)
     )];
+    logger.debug("User IDs found: " + userIds);
     const loggedInUsers = await userModel.find({ _id: { $in: userIds } });
-
+    logger.debug("Logged in users found: " + loggedInUsers.length);
     let statistics = {
       usersCount,
       assignmentsCount,
