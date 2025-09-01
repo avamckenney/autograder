@@ -302,9 +302,12 @@ app.get("/statistics", authCheck.checkRolePermission("admin"), async function(re
     let recentAverageExecutionTime = assignmentExecutor.getRecentAverageExecutionTime();
 
     let loggedInUsers = [];
+    logger.debug("Loading logged in users...")
     if (req.sessionStore && req.sessionStore.sessions) {
       const activeSessionIds = Object.keys(req.sessionStore.sessions);
       const loggedInUserIds = [];
+
+      logger.debug("Active session IDs: " + activeSessionIds.join(", "));
 
       for (const sessionId of activeSessionIds) {
           const sessionData = JSON.parse(req.sessionStore.sessions[sessionId]);
@@ -315,6 +318,7 @@ app.get("/statistics", authCheck.checkRolePermission("admin"), async function(re
 
       // Find users based on the extracted IDs
       loggedInUsers = await userModel.find({ _id: { $in: loggedInUserIds } });
+      logger.debug("Logged in users: " + loggedInUsers.map(u => u.username).join(", "));
     }
 
     let statistics = {
