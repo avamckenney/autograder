@@ -316,7 +316,12 @@ app.get("/statistics", authCheck.checkRolePermission("admin"), async function(re
       .map(sess => sess.session?.passport?.user)
       .filter(Boolean);
     logger.debug("User IDs found: " + userIds);
-    const loggedInUsers = [...new Set(userIds)];
+    const uniqueUsers = [...new Set(userIds)];
+    const loggedInUsers = [];
+    for(const userId of uniqueUsers) {
+      loggedInUsers.push(userId);
+    }
+
     logger.debug("Unique User IDs found: " + loggedInUsers);
     
     await client.close();
