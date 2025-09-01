@@ -316,10 +316,9 @@ app.get("/statistics", authCheck.checkRolePermission("admin"), async function(re
       .map(sess => sess.session?.passport?.user)
       .filter(Boolean);
     logger.debug("User IDs found: " + userIds);
-    const uniqueUserIds = [...new Set(userIds)];
-    logger.debug("Unique User IDs found: " + uniqueUserIds);
-    const loggedInUsers = await userModel.find({ _id: { $in: uniqueUserIds } });
-    logger.debug("Logged in users found: " + loggedInUsers.length);
+    const loggedInUsers = [...new Set(userIds)];
+    logger.debug("Unique User IDs found: " + loggedInUsers);
+    
     await client.close();
   
 
