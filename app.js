@@ -278,40 +278,61 @@ app.use("/create-assignment", authCheck.checkRolePermission("admin"), function(r
 });
 
 app.get("/statistics", authCheck.checkRolePermission("admin"), async function(req, res) {
-  let usersCount = await userModel.countDocuments({});
-  let assignmentsCount = await assignmentModel.countDocuments({});
-  let executionsCount = await executionModel.countDocuments({});
+  try{
+    let usersCount = await userModel.countDocuments({});
+    let assignmentsCount = await assignmentModel.countDocuments({});
+    let executionsCount = await executionModel.countDocuments({});
 
-  let assignments = await assignmentModel.find({}).populate('creator').exec();
+    let assignments = await assignmentModel.find({}).populate('creator').exec();
 
-  for(let assignment of assignments) {
-    assignment.executionCount = await executionModel.countDocuments({ assignment: assignment._id });
-    assignment.completedCount = await executionModel.countDocuments({ assignment: assignment._id, status: 'completed' });
-    assignment.failedCount = await executionModel.countDocuments({ assignment: assignment._id, status: 'failed' });
-    assignment.pendingCount = await executionModel.countDocuments({ assignment: assignment._id, status: 'pending' });
-    let averageExecutionTime = await executionModel.aggregate([
-      { $match: { assignment: assignment._id, status: 'completed' } },
-      { $group: { _id: null, averageTime: { $avg: "$executionTime" } } }
-    ]);
-    assignment.averageExecutionTime = averageExecutionTime.length > 0 ? averageExecutionTime[0].averageTime : "N/A";
+    for(let assignment of assignments) {
+      assignment.executionCount = await executionModel.countDocuments({ assignment: assignment._id });
+      assignment.completedCount = await executionModel.countDocuments({ assignment: assignment._id, status: 'completed' });
+      assignment.failedCount = await executionModel.countDocuments({ assignment: assignment._id, status: 'failed' });
+      assignment.pendingCount = await executionModel.countDocuments({ assignment: assignment._id, status: 'pending' });
+      let averageExecutionTime = await executionModel.aggregate([
+        { $match: { assignment: assignment._id, status: 'completed' } },
+        { $group: { _id: null, averageTime: { $avg: "$executionTime" } } }
+      ]);
+      assignment.averageExecutionTime = averageExecutionTime.length > 0 ? averageExecutionTime[0].averageTime : "N/A";
+    }
+
+    let queueSize = assignmentExecutor.getQueueCount();
+    let maxQueueCountReached = assignmentExecutor.getMaxQueueCountReached();
+    let recentAverageExecutionTime = assignmentExecutor.getRecentAverageExecutionTime();
+
+    let loggedInUsers = [];
+    if (req.sessionStore && req.sessionStore.sessions) {
+      const activeSessionIds = Object.keys(req.sessionStore.sessions);
+      const loggedInUserIds = [];
+
+      for (const sessionId of activeSessionIds) {
+          const sessionData = JSON.parse(req.sessionStore.sessions[sessionId]);
+          if (sessionData && sessionData.passport && sessionData.passport.user) {
+              loggedInUserIds.push(sessionData.passport.user);
+          }
+      }
+
+      // Find users based on the extracted IDs
+      loggedInUsers = await userModel.find({ _id: { $in: loggedInUserIds } });
+    }
+
+    let statistics = {
+      usersCount,
+      assignmentsCount,
+      executionsCount,
+      assignments,
+      queueSize,
+      maxQueueCountReached,
+      recentAverageExecutionTime,
+      loggedInUsers
+    };
+
+    res.render("statistics", { statistics, date: new Date().toString(), user: req.user });
+  }catch(err){
+    logger.error("Error occurred while rendering statistics: " + err.message);
+    res.status(500).send("Internal Server Error");
   }
-
-  let queueSize = assignmentExecutor.getQueueCount();
-  let maxQueueCountReached = assignmentExecutor.getMaxQueueCountReached();
-  let recentAverageExecutionTime = assignmentExecutor.getRecentAverageExecutionTime();
-
-  let statistics = {
-    usersCount,
-    assignmentsCount,
-    executionsCount,
-    assignments,
-    queueSize,
-    maxQueueCountReached,
-    recentAverageExecutionTime
-  };
-
-
-  res.render("statistics", { statistics, date: new Date().toString(), user: req.user });
 });
 
 app.use("/favicon.ico", function(req, res) {

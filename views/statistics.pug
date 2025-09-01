@@ -45,3 +45,19 @@ html
                             | <strong>Average Execution Time:</strong> Not available (no completed executions or error calculating average)
                     br
                     br
+        .container
+            h1 Logged In Users 
+
+            if statistics.loggedInUsers && statistics.loggedInUsers.length > 0
+                for user in statistics.loggedInUsers
+                    .user-statistics
+                        p
+                            | <strong>Username:</strong> #{user.username}
+                        p
+                            | <strong>Role:</strong> #{user.role}
+                        p
+                            | <strong>Batch:</strong> #{user.batch}
+                        br
+                        br
+            else
+                p No users are currently logged in.
