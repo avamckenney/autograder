@@ -49,6 +49,21 @@ var sessionStore = new mongoDBSessionStore({
   collection: 'sessions'
 });
 
+
+app.use(function(req, res, next) {
+  if (req.host && req.host !== "avamckenney.scs.carleton.ca") { // req.host may be undefined if the client did not send host header
+    res.writeHead(404, {
+      'Content-Type': 'text/plain'
+    });
+    setTimeout(() => {
+      res.end();
+    }, 10000);
+  } else {
+    next();
+  }
+});
+
+
 passport.use(new LocalStrategy(userModel.authenticate()));
 app.use(session({
     secret: config.sessionSecret, //TODO: update this to a more secure secret
@@ -60,7 +75,7 @@ app.use(session({
       httpOnly: true, 
       secure: true, 
       maxAge: 5 * 60 * 1000, // 5 minutes
-      sameSite: true // 'strict' or 'lax' based on your requirements
+      sameSite: 'strict' // 'strict' or 'lax' based on your requirements
     },
     rolling: true, // Reset the cookie expiration on every request
    })
@@ -317,6 +332,8 @@ app.get("/statistics", authCheck.checkRolePermission("admin"), async function(re
       .filter(Boolean);
     logger.debug("User IDs found: " + userIds);
     const uniqueUsers = [...new Set(userIds)];
+    
+    
     const loggedInUsers = [];
     for(const userId of uniqueUsers) {
       loggedInUsers.push(userId);
