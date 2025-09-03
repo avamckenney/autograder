@@ -43,7 +43,7 @@ const reqSerializer = (req) => {
   const s = pino.stdSerializers.req(req);
   if (s?.headers) {
     const { cookie, ...safeHeaders } = s.headers;
-    return { ...s, ip: req.ip || req.connection.remoteAddress,headers: safeHeaders };
+    return { ...s, headers: safeHeaders };
   }
   return s;
 };
