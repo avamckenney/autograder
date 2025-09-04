@@ -20,7 +20,8 @@ html
                         strong Assignment Creator:
                         = ' ' + execution.assignment.creator.username
                     li
-                        strong Submitted At: #{execution.createdAt}
+                        strong Submitted At:
+                        = ' ' + execution.createdAt
                     li(id="execution-status")
                         strong Status: 
                         if execution.status == 'completed'
@@ -35,22 +36,29 @@ html
                             span(style="color: gray;") Unknown
                     if execution.status == 'completed' || execution.status == 'failed'
                         li(id="finished-at")
-                            strong Finished At: #{execution.finishedAt.toString()}
+                            strong Finished At:
+                            = ' ' + execution.finishedAt.toString()
                         li(id="execution-time")
-                            strong Time to Grade: #{execution.executionTime} seconds
+                            strong Time to Grade:
+                            = ' ' + execution.executionTime + ' seconds'
                         if execution.grade >= 0
                             li(id="grade")
-                                strong Grade: #{execution.grade} / #{execution.assignment.maxGrade}
+                                strong Grade:
+                                = ' ' + execution.grade + ' / ' + execution.assignment.maxGrade
                     else if execution.status == 'cancelled'
                         li(id="finished-at")
-                            strong Cancelled At: #{execution.finishedAt.toString()}
+                            strong Cancelled At:
+                            = ' ' + execution.finishedAt.toString()
                     else
                         li(id="finished-at")
-                            strong Finished At: Pending...
+                            strong Finished At:
+                            = ' Pending...'
                         li(id="execution-time")
-                            strong Time to Grade: Pending...
+                            strong Time to Grade:
+                            = ' Pending...'
                         li(id="grade")
-                            strong Grade: Pending...
+                            strong Grade:
+                            = ' Pending...'
                 strong Feedback:
                 br
                 if execution.status == 'completed'
