@@ -9,6 +9,7 @@ const LOGS_OUTPUT_DIR = "logs/"; //TODO: move to config file?
 const logger = require('./logger').logger; // Import the logger module
 
 
+
 // Connect to the Docker daemon (default socket path)
 const docker = new Docker();
 
@@ -84,18 +85,39 @@ async function clearExistingContainer(executionEntry){
 async function createAndStartContainer(executionEntry) {
     let result = null;
     let container = null;
+    const dockerHomeDir = '/home/ubuntu';
+    const volumeName = `sandbox_workspace_${executionEntry._id}`;
     try {
-        // Create a container
+      await docker.createVolume({ Name: volumeName });
+
+      // Create a container
         container = await docker.createContainer({
           Image: executionEntry.assignment.imageName, 
-          Cmd: ['/bin/bash', '-c', "mkdir assignment && cp ./scripts/" + executionEntry.zipFilePath.replaceAll(path.sep, '.') + ".script.sh ./assignment/ && cd assignment && chmod +x ./" + executionEntry.zipFilePath.replaceAll(path.sep, '.') + ".script.sh " + " && ./" + executionEntry.zipFilePath.replaceAll(path.sep, '.') + ".script.sh"], // Command to execute inside the container
+          WorkingDir: `${dockerHomeDir}/work/`,
+          Cmd: ['/bin/bash', '-c', `cd ${dockerHomeDir}/work/ && pwd && ls && cp ./scripts/` + executionEntry.zipFilePath.replaceAll(path.sep, '.') + ".script.sh ./assignment/ && cd assignment && pwd && ls  && chmod +x ./" + executionEntry.zipFilePath.replaceAll(path.sep, '.') + ".script.sh " + " && ./" + executionEntry.zipFilePath.replaceAll(path.sep, '.') + ".script.sh"], // Command to execute inside the container
           name: createContainerName(executionEntry),
+          Tty: false,
+          User: 'ubuntu',
+          StorageOpt: {
+            "size": "250M" // Set the size of the container's filesystem
+          },
           HostConfig: {
-            NetworkMode: 'no-internet-network',
-            Memory: 1.28e+8, // 128MB in bytes
-            StorageOpt: {
-             "size": "100M" // Set the size of the container's filesystem
-            }
+            NetworkMode: 'none',             // no networking at all
+            ReadonlyRootfs: false,            // root filesystem read-only
+            Binds: [`${volumeName}:${dockerHomeDir}/work:rw`],
+            CapDrop: ['ALL'],                // drop all Linux capabilities
+            SecurityOpt: [
+              'no-new-privileges:true',
+              //`seccomp=${seccompProfile}`, // supply inline seccomp profile JSON
+              // 'apparmor=docker-default',   // or stricter AppArmor profile if available
+            ],
+            Tmpfs: {
+              '/tmp': 'rw,noexec,nosuid,nodev,size=64m'
+            },
+            Memory: 256 * 1024 * 1024,       // 256MB
+            PidsLimit: 128,                  // prevent fork bombs
+            OomKillDisable: false,
+            Ulimits: [{ Name: 'nofile', Soft: 512, Hard: 1024 }]
           }
         });
         
@@ -108,12 +130,14 @@ async function createAndStartContainer(executionEntry) {
             throw Error("Could not create tar file for execution entry " + executionEntry._id);
         }
 
-        await container.putArchive(tarPath, {path: '/'});
+        await container.putArchive(tarPath, { path: `${dockerHomeDir}/work/` });
         await container.start();
-        
-        
-        let data = await container.wait();
 
+        console.log("Container started for execution entry: " + executionEntry._id);
+
+        const waitResult = await container.wait(); // Wait for the container to finish
+      
+        console.log("Container finished execution for entry: " + executionEntry._id);
         let logs = null;
         if(SAVE_LOGS){
           console.log("Saving logs for execution entry: " + executionEntry._id);
@@ -123,7 +147,8 @@ async function createAndStartContainer(executionEntry) {
           await fsPromises.writeFile(logFilePath, logs.toString('utf8'));
         }   
 
-        if(data.StatusCode !== 0){
+        //if(execInfo.ExitCode !== 0){
+        if(waitResult.StatusCode !== 0){
           logger.debug("Container execution failed: " + executionEntry._id);
           executionEntry.status = "failed";
           executionEntry.finishedAt = Date.now();
@@ -160,7 +185,7 @@ async function createAndStartContainer(executionEntry) {
           return;
         }
         
-        let result = await container.getArchive({path: "./assignment/feedback-" + executionEntry._id + ".txt"});
+        let result = await container.getArchive({path: `${dockerHomeDir}/work/assignment/feedback-` + executionEntry._id + ".txt"});
         let feedbackPath = path.join(FEEDBACK_OUTPUT_DIR, 'output-' + executionEntry.assignment.name + "-" +  executionEntry.studentName + "-" + executionEntry._id + '.tar')
         let outputStream = await fs.createWriteStream(feedbackPath);
         result.pipe(outputStream);    
@@ -170,7 +195,7 @@ async function createAndStartContainer(executionEntry) {
             result.on('error', reject); // Also handle stream errors
           });
         await tar.extract({ file: feedbackPath, cwd: FEEDBACK_OUTPUT_DIR });
-        result = await container.getArchive({path: "./assignment/grade-" + executionEntry._id + ".txt"});
+        result = await container.getArchive({path: `${dockerHomeDir}/work/assignment/grade-` + executionEntry._id + ".txt"});
         let gradePath = path.join(FEEDBACK_OUTPUT_DIR, 'grade-output-' + executionEntry.assignment.name + "-" +  executionEntry.studentName + "-" + executionEntry._id + '.tar')
         outputStream = await fs.createWriteStream(gradePath);
         
@@ -224,6 +249,10 @@ async function createAndStartContainer(executionEntry) {
           if (err.statusCode !== 404) { // Ignore not found error
             console.error('Error removing existing container after running:', err);
           }
+        }
+
+        try { await docker.getVolume(volumeName).remove(); } catch {
+          logger.error("Error removing volume " + volumeName);
         }
     }
     return result;
