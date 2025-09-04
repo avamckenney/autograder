@@ -17,8 +17,8 @@ html
                         strong Assignment: 
                         a(href="/users/" + execution.assignment.creator.username + "/assignments/" + execution.assignment.name)= execution.assignment.name
                     li
-                        strong Assignment Creator: #{execution.assignment.creator.username}
-                    
+                        strong Assignment Creator:
+                        = ' ' + execution.assignment.creator.username
                     li
                         strong Submitted At: #{execution.createdAt}
                     li(id="execution-status")
