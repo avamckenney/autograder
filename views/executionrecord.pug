@@ -12,7 +12,7 @@ html
                 ul
                     li
                         strong User: 
-                        a(href="/users/" + execution.studentName)= #{execution.studentName}
+                        a(href="/users/" + execution.studentName)= execution.studentName
                     li
                         strong Assignment: 
                         a(href="/users/" + execution.assignment.creator.username + "/assignments/" + execution.assignment.name)
