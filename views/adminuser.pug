@@ -11,7 +11,7 @@ html
                 h2 Your Assignments
                 each assignment in assignments
                     div
-                        = Assignment: #{assignment.name}
+                        | Assignment: #{assignment.name}
                         br
                         a(href="/users/" + user.username + "/assignments/" + assignment.name) View Details
                         br
