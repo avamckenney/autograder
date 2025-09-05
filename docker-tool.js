@@ -103,7 +103,7 @@ async function createAndStartContainer(executionEntry) {
           },
           HostConfig: {
             NetworkMode: 'none',             // no networking at all
-            ReadonlyRootfs: false,            // root filesystem read-only
+            ReadonlyRootfs: true,            // root filesystem read-only
             Binds: [`${volumeName}:${dockerHomeDir}/work:rw`],
             CapDrop: ['ALL'],                // drop all Linux capabilities
             SecurityOpt: [
