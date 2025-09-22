@@ -634,7 +634,17 @@ router.get('/:assignment', authCheck.checkRolePermission("student"), async (req,
         await req.assignmentDoc.populate("creator");
 
         if(req.user.username == req.assignmentDoc.creator.username){
-            let subs = await executionModel.find({ assignment: req.assignmentDoc._id }).select("finishedAt createdAt status _id studentName").sort({ createdAt: -1 }).limit(50).exec();
+            let limit = 50; // Max number of submissions to retrieve
+            if(req.query.limit && !isNaN(parseInt(req.query.limit))){
+                limit = Math.min(parseInt(req.query.limit), 200); // Cap at 200 to prevent abuse
+            }
+            
+            let searchDoc = { assignment: req.assignmentDoc._id };
+            if(req.query.username && req.query.username.length > 0){
+                searchDoc.studentName = req.query.username;
+            }
+
+            let subs = await executionModel.find(searchDoc).select("finishedAt createdAt status _id studentName").sort({ createdAt: -1 }).limit(limit).exec();
             logger.debug("Found " + subs.length + " submissions for assignment: " + req.assignmentDoc.name);
             
             let deadlineString = ""
