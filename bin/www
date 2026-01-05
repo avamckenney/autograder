@@ -52,6 +52,7 @@ async function main() {
     console.log('Running in production mode');
     
     try{
+      console.log("Connecting to MongoDB...");
       await mongoose.connect(`mongodb://${config.mongoAuth.user}:${config.mongoAuth.password}@${config.mongoAddress}/${config.mongoDatabase}`);
       console.log("Connected to MongoDB");
     } catch(err){
@@ -63,6 +64,7 @@ async function main() {
     // Development-specific configurations (e.g., optimized logging, different database)
     console.log('Running in development mode');
     try{
+      console.log("Connecting to MongoDB...");
       await mongoose.connect(`mongodb://${config.mongoAuth.user}:${config.mongoAuth.password}@${config.mongoAddress}/${config.mongoDatabase}`);
       console.log("Connected to MongoDB");
     } catch(err){
