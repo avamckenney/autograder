@@ -102,7 +102,8 @@ async function createAndStartContainer(executionEntry) {
             "size": "250M" // Set the size of the container's filesystem
           },
           HostConfig: {
-            NetworkMode: 'none',             // no networking at all
+            //NetworkMode: 'none',             // no networking at all
+            NetworkMode: 'restricted_network',
             ReadonlyRootfs: true,            // root filesystem read-only
             Binds: [`${volumeName}:${dockerHomeDir}/work:rw`],
             CapDrop: ['ALL'],                // drop all Linux capabilities
