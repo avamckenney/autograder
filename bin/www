@@ -51,13 +51,22 @@ async function main() {
     // Production-specific configurations (e.g., debug logging, different database)
     console.log('Running in production mode');
     
-    await mongoose.connect(`mongodb://${config.mongoAuth.user}:${config.mongoAuth.password}@${config.mongoAddress}/${config.mongoDatabase}`);
+    try{
+      await mongoose.connect(`mongodb://${config.mongoAuth.user}:${config.mongoAuth.password}@${config.mongoAddress}/${config.mongoDatabase}`);
+    } catch(err){
+      logger.fatal("Fatal error connecting to MongoDB: " + err.message);
+      process.exit(1);
+    }
   
   } else {
     // Development-specific configurations (e.g., optimized logging, different database)
     console.log('Running in development mode');
-    await mongoose.connect(`mongodb://${config.mongoAuth.user}:${config.mongoAuth.password}@${config.mongoAddress}/${config.mongoDatabase}`);
-  
+    try{
+      await mongoose.connect(`mongodb://${config.mongoAuth.user}:${config.mongoAuth.password}@${config.mongoAddress}/${config.mongoDatabase}`);
+    } catch(err){
+      logger.fatal("Fatal error connecting to MongoDB: " + err.message);
+      process.exit(1);
+    }
   }
 
   
