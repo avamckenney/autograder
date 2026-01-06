@@ -234,7 +234,7 @@ async function registerTestUsers() {
       { username: "teststudent2", role: "student", batch: "testbatch" },
       { username: "teststudent3", role: "student", batch: "testbatch" },
       { username: "ava", role: "admin", batch: "testbatch" },
-      { username: "profa*a", role: "admin", batch: "testbatch" }
+      { username: "aprofs", role: "admin", batch: "testbatch" }
     ];
 
     for (let user of testUsers) {
