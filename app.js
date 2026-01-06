@@ -100,17 +100,17 @@ app.post('/login', function(req, res, next){
   passport.authenticate('local', (err, user, info) => {
     if (err){
       logger.error("User authentication failed, redirecting to login page");
-      return res.redirect("/login.html?error=Authentication failed. Check your username and password.");
+      return res.redirect("/login.html?error=Authentication failed. Check your username and password and try again.  If the issue persists, contact your instructor.");
     }   
     if (!user){
       logger.warn("No user object after login, redirecting to login");
-      return res.redirect('/login?error=Error logging you in. Please try again.  If the issue persists, contact your instructor.');
+      return res.redirect('/login?error=Login failed. Check your username and password and try again.  If the issue persists, contact your instructor.');
     }
 
     req.logIn(user, (err) => {
       if (err){
         logger.error("User login failed, redirecting to login page");
-        return res.redirect("/login.html?error=Login failed. Please try again. If the issue persists, contact your instructor.");
+        return res.redirect("/login.html?error=Error logging you in. Please try again. If the issue persists, contact your instructor.");
       }
       
       const url = redirectUrl || '/users/' + req.user.username;
